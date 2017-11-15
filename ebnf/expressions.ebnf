@@ -1,0 +1,33 @@
+expression = 
+    simple_expression, [ boolean_operator, simple_expression ]
+;
+
+simple_expression = 
+    [ "+" | "-" ], term, { [ "+" | "-" ], term }
+;
+
+term =
+    factor, { ( "**" | "*" | "/" | % ), factor }
+;
+
+factor = 
+    simple_factor |
+    function_call
+;
+
+simple_factor = 
+    number |
+    bracketed_expression
+;
+
+function_call = 
+    identifier, "(", expression, ")"
+;
+
+bracketed_expression = 
+    "(", expression, ")"
+;
+
+boolean_operator = 
+    "=" | "<" | ">" | "<=" | ">="
+;
