@@ -1,7 +1,6 @@
 /* cSpell:disable */
 
 const watching = process.env.npm_lifecycle_script.indexOf("--single-run") === -1;
-console.log("Watching: " + watching);
 
 module.exports = function (config) {
     config.set({

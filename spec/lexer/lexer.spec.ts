@@ -37,26 +37,26 @@ describe('Lexer', () => {
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisClose, 9, ')'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 10));
         });
-        // it('returns correct tokens (complex)', () => {
-        //     const lexer = new Lexer.Lexer(input);
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 6, '4'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 7, 'd'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 8, '6'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Plus, 11, '+'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 12, '5'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 13, 'd'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 14, '10'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 16, 'kl'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 18, '2'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Slash, 19, '/'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 20, '2'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Plus, 21, '+'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 22, '4'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisClose, 23, ')'));
-        //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 24));
-        // });
+        it('returns correct tokens (complex)', () => {
+            const lexer = new Lexer.Lexer(input); // floor(4*6**2+5*10/2+4)
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 6, '4'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Asterisk, 7, '*'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 8, '6'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.DoubleAsterisk, 9, '**'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 11, '2'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Plus, 12, '+'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 13, '5'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Asterisk, 14, '*'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 15, '10'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Slash, 17, '/'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 18, '2'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Plus, 19, '+'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 20, '4'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisClose, 21, ')'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 22));
+        });
         // it('interprets remaining operators correctly', () => {
         //     const lexer = new Lexer.Lexer('2d10%8-2*3**1d4!>1<2<=2>=2d3!!=3+{4,5}');
         //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 0, '2'));
