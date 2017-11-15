@@ -20,11 +20,7 @@ npm install --save expressionTS
 
 ## Installing Dependencies
 
-Installing the dependencies is done using a standard ```npm i```, followed by ```typings install```. For convenience, this has been condensed to the following command:
-
-```shell
-npm run install
-```
+Installing the dependencies is done using a standard ```npm i```.
 
 ## Running the Tests
 
