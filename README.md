@@ -1,6 +1,6 @@
 # expressionTS  [![NPM version](https://badge.fury.io/js/expressionts.svg)](http://badge.fury.io/js/expressionts)
 
-[![Build Status](https://travis-ci.org/trwolfe13/expressionTS.svg?branch=master)](https://travis-ci.org/trwolfe13/expressionTS) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a41fe0aa8b904edbbb68ce9132e44373)](https://www.codacy.com/app/trwolfe13/expressionTS?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=trwolfe13/expressionTS&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/trwolfe13/expressionTS.svg?branch=master)](https://travis-ci.org/trwolfe13/expressionTS) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a41fe0aa8b904edbbb68ce9132e44373)](https://www.codacy.com/app/trwolfe13/expressionTS?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=trwolfe13/expressionTS&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/a41fe0aa8b904edbbb68ce9132e44373)](https://www.codacy.com/app/trwolfe13/expressionTS?utm_source=github.com&utm_medium=referral&utm_content=trwolfe13/expressionTS&utm_campaign=Badge_Coverage)
 
 A library written in TypeScript for parsing and interpreting expressions.
 
