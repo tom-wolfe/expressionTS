@@ -1,0 +1,46 @@
+{
+  "name": "expressionts",
+  "version": "0.0.1",
+  "description": "A library written in TypeScript for parsing and interpreting expressions.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "npm run clean && npm run lint && npm run tsc",
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "coverage": "istanbul coverage",
+    "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage --verbose",
+    "lint": "tslint -p ./tsconfig.json",
+    "postinstall": "./node_modules/.bin/typings install",
+    "tsc": "tsc --project ./tsconfig.build.json",
+    "test": "npm run lint && karma start --single-run",
+    "test_watch": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trwolfe13/expressionTS.git"
+  },
+  "keywords": [
+    "expression",
+    "parser",
+    "typescript"
+  ],
+  "author": "Tom Wolfe <trwolfe13@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trwolfe13/expressionTS/issues"
+  },
+  "homepage": "https://github.com/trwolfe13/expressionTS#readme",
+  "devDependencies": {
+    "@types/jasmine": "^2.8.2",
+    "codacy-coverage": "^2.0.2",
+    "istanbul": "^0.4.5",
+    "jasmine-core": "2.5.2",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-typescript": "^3.0.4",
+    "rimraf": "^2.6.1",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.1"
+  },
+  "dependencies": {}
+}
