@@ -1,4 +1,4 @@
-# expressionTS  [![NPM version](https://badge.fury.io/js/expressionTS.svg)](http://badge.fury.io/js/expressionTS)
+# expressionTS  [![NPM version](https://badge.fury.io/js/expressionts.svg)](http://badge.fury.io/js/expressionts)
 
 [![Build Status](https://travis-ci.org/trwolfe13/expressionTS.svg?branch=master)](https://travis-ci.org/trwolfe13/expressionTS)
 
