@@ -19,9 +19,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Multiply);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(6);
+            expect(exp.getChild(0).value).toBe(6);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(4);
+            expect(exp.getChild(1).value).toBe(4);
         });
         it('can correctly identify a division', () => {
             const lexer = new MockLexer([
@@ -36,9 +36,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Divide);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(6);
+            expect(exp.getChild(0).value).toBe(6);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(4);
+            expect(exp.getChild(1).value).toBe(4);
         });
         it('can correctly identify an exponent', () => {
             const lexer = new MockLexer([
@@ -53,9 +53,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Exponent);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(6);
+            expect(exp.getChild(0).value).toBe(6);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(4);
+            expect(exp.getChild(1).value).toBe(4);
         });
         it('can correctly identify a modulo', () => {
             const lexer = new MockLexer([
@@ -70,9 +70,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Modulo);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(6);
+            expect(exp.getChild(0).value).toBe(6);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(4);
+            expect(exp.getChild(1).value).toBe(4);
         });
         it('can correctly parse multiple operators', () => {
             const lexer = new MockLexer([
@@ -93,13 +93,13 @@ describe('Parser', () => {
             expect(lhs.type).toBe(NodeType.Multiply);
             expect(lhs.getChildCount()).toBe(2);
             expect(lhs.getChild(0).type).toBe(NodeType.Number);
-            expect(lhs.getChild(0).getAttribute('value')).toBe(4);
+            expect(lhs.getChild(0).value).toBe(4);
             expect(lhs.getChild(1).type).toBe(NodeType.Number);
-            expect(lhs.getChild(1).getAttribute('value')).toBe(3);
+            expect(lhs.getChild(1).value).toBe(3);
 
             const rhs = exp.getChild(1);
             expect(rhs.type).toBe(NodeType.Number);
-            expect(rhs.getAttribute('value')).toBe(1);
+            expect(rhs.value).toBe(1);
         });
     });
 });

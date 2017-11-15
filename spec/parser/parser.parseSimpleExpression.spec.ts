@@ -19,9 +19,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Add);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(10);
+            expect(exp.getChild(0).value).toBe(10);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(6);
+            expect(exp.getChild(1).value).toBe(6);
         });
         it('can correctly parse a simple subtraction', () => {
             const lexer = new MockLexer([
@@ -36,9 +36,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Subtract);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(10);
+            expect(exp.getChild(0).value).toBe(10);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(6);
+            expect(exp.getChild(1).value).toBe(6);
         });
         it('can correctly parse a simple negation', () => {
             const lexer = new MockLexer([
@@ -52,7 +52,7 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Negate);
             expect(exp.getChildCount()).toBe(1);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(4);
+            expect(exp.getChild(0).value).toBe(4);
         });
         it('can correctly parse multiple operators', () => {
             const lexer = new MockLexer([
@@ -73,13 +73,13 @@ describe('Parser', () => {
             expect(lhs.type).toBe(NodeType.Add);
             expect(lhs.getChildCount()).toBe(2);
             expect(lhs.getChild(0).type).toBe(NodeType.Number);
-            expect(lhs.getChild(0).getAttribute('value')).toBe(4);
+            expect(lhs.getChild(0).value).toBe(4);
             expect(lhs.getChild(1).type).toBe(NodeType.Number);
-            expect(lhs.getChild(1).getAttribute('value')).toBe(3);
+            expect(lhs.getChild(1).value).toBe(3);
 
             const rhs = exp.getChild(1);
             expect(rhs.type).toBe(NodeType.Number);
-            expect(rhs.getAttribute('value')).toBe(1);
+            expect(rhs.value).toBe(1);
         });
     });
 });

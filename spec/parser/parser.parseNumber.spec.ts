@@ -22,7 +22,7 @@ describe('Parser', () => {
             const node = parser.parseNumber(result);
             expect(result.errors.length).toBe(0);
             expect(node.type).toBe(NodeType.Number);
-            expect(node.getAttribute('value')).toBe(12);
+            expect(node.value).toBe(12);
         });
         it('can correctly parse a real number', () => {
             const lexer = new MockLexer([
@@ -33,7 +33,7 @@ describe('Parser', () => {
             const node = parser.parseNumber(result);
             expect(result.errors.length).toBe(0);
             expect(node.type).toBe(NodeType.Number);
-            expect(node.getAttribute('value')).toBe(12.56);
+            expect(node.value).toBe(12.56);
         });
     });
 });

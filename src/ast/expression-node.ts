@@ -3,8 +3,9 @@ import { NodeAttributes } from './node-attributes';
 import { NodeType } from './node-type';
 
 export class ExpressionNode {
+    value: any;
     readonly type: NodeType;
-    private attributes;
+
     private parent: ExpressionNode;
     private children: ExpressionNode[];
 
@@ -15,11 +16,7 @@ export class ExpressionNode {
 
     copy(): ExpressionNode {
         const copy = Factory.create(this.type);
-        if (this.attributes) {
-            Object.keys(this.attributes).forEach(attr => {
-                copy.setAttribute(attr, this.attributes[attr]);
-            });
-        }
+        copy.value = this.value;
         if (this.children) {
             this.children.forEach(child => {
                 copy.addChild(child.copy());
@@ -70,16 +67,6 @@ export class ExpressionNode {
     forEachChild(fn: (child: ExpressionNode, index?: number) => boolean | void) {
         const children = [...this.children || []];
         children.forEach(fn);
-    }
-
-    getAttribute(key: string) {
-        return this.attributes ? this.attributes[key] : undefined;
-    }
-
-    setAttribute(key: string, value: any) {
-        if (!this.attributes) { this.attributes = new NodeAttributes(); }
-        this.attributes[key] = value;
-        return this;
     }
 
     toJSON(): any {

@@ -17,7 +17,7 @@ describe('Parser', () => {
             expect(result.errors.length).toBe(0);
             expect(exp.type).toBe(NodeType.Number);
             expect(exp.getChildCount()).toBe(0);
-            expect(exp.getAttribute('value')).toBe(10);
+            expect(exp.value).toBe(10);
         });
         it('can correctly parse an addition', () => {
             const lexer = new MockLexer([
@@ -34,9 +34,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Add);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(10);
+            expect(exp.getChild(0).value).toBe(10);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(6);
+            expect(exp.getChild(1).value).toBe(6);
         });
         it('throws on missing closing bracket', () => {
             const lexer = new MockLexer([

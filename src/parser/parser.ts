@@ -120,8 +120,7 @@ export class Parser extends ParserBase {
 
     parseFunction(result: ParseResult): Ast.ExpressionNode {
         const functionName = this.expectAndConsume(result, TokenType.Identifier);
-        const root = Ast.Factory.create(Ast.NodeType.Function)
-            .setAttribute('name', functionName.value);
+        const root = Ast.Factory.create(Ast.NodeType.Function, functionName.value);
 
         this.expectAndConsume(result, TokenType.ParenthesisOpen)
 
@@ -142,8 +141,7 @@ export class Parser extends ParserBase {
 
     parseNumber(result: ParseResult): Ast.ExpressionNode {
         const numberToken = this.lexer.getNextToken();
-        return Ast.Factory.create(Ast.NodeType.Number)
-            .setAttribute('value', Number(numberToken.value));
+        return Ast.Factory.create(Ast.NodeType.Number, Number(numberToken.value));
     }
 
     parseBracketedExpression(result: ParseResult): Ast.ExpressionNode {

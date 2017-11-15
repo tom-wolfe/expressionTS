@@ -3,10 +3,8 @@ import * as Ast from '../../src/ast';
 describe('ExpressionNode', () => {
     describe('copy', () => {
         const root = Ast.Factory.create(Ast.NodeType.Add);
-        root.addChild(Ast.Factory.create(Ast.NodeType.Number))
-            .setAttribute('value', 4);
-        root.addChild(Ast.Factory.create(Ast.NodeType.Number))
-            .setAttribute('value', 10);
+        root.addChild(Ast.Factory.create(Ast.NodeType.Number, 4))
+        root.addChild(Ast.Factory.create(Ast.NodeType.Number, 10))
 
         it('should be equal', () => {
             expect(root.copy()).toEqual(root);

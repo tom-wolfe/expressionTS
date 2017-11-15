@@ -19,9 +19,9 @@ describe('Parser', () => {
             expect(exp.type).toBe(NodeType.Greater);
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).getAttribute('value')).toBe(10);
+            expect(exp.getChild(0).value).toBe(10);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(5);
+            expect(exp.getChild(1).value).toBe(5);
         });
         it('correctly handles operator precedence (10 * 5 + 2)', () => {
             const lexer = new MockLexer([
@@ -39,7 +39,7 @@ describe('Parser', () => {
             expect(exp.getChildCount()).toBe(2);
             expect(exp.getChild(0).type).toBe(NodeType.Multiply);
             expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).getAttribute('value')).toBe(2);
+            expect(exp.getChild(1).value).toBe(2);
         });
     });
 });
