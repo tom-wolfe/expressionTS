@@ -37,6 +37,17 @@ describe('Lexer', () => {
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisClose, 9, ')'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 10));
         });
+        it('returns correct tokens (simple)', () => {
+            const inputSimple = 'floor(x+y)';
+            const lexer = new Lexer.Lexer(inputSimple);
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 6, 'x'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Plus, 7, '+'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 8, 'y'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisClose, 9, ')'));
+            expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 10));
+        });
         it('returns correct tokens (complex)', () => {
             const lexer = new Lexer.Lexer(input); // floor(4*6**2+5*10/2+4)
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));

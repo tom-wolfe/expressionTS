@@ -11,13 +11,14 @@ term =
 ;
 
 factor = 
-    simple_factor |
+    number |
+    variable |
+    bracketed_expression |
     function_call
 ;
 
-simple_factor = 
-    number |
-    bracketed_expression
+variable = 
+    identifier
 ;
 
 function_call = 

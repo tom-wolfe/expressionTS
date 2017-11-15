@@ -34,6 +34,33 @@ describe('Parser', () => {
             expect(exp.getChild(0).type).toBe(NodeType.Number);
             expect(exp.getChild(0).value).toBe(10);
         });
+        it('can correctly identify a variable', () => {
+            const lexer = new MockLexer([
+                new Token(TokenType.Identifier, 0, 'x')
+            ]);
+            const parser = new Parser.Parser(lexer);
+            const result = new ParseResult();
+            const exp = parser.parseFactor(result);
+            expect(result.errors.length).toBe(0);
+            expect(exp.type).toBe(NodeType.Variable);
+            expect(exp.getChildCount()).toBe(0);
+        });
+        it('can correctly identify a variable as a parameter', () => {
+            const lexer = new MockLexer([
+                new Token(TokenType.Identifier, 0, 'floor'),
+                new Token(TokenType.ParenthesisOpen, 5, '('),
+                new Token(TokenType.Identifier, 6, 'x'),
+                new Token(TokenType.ParenthesisClose, 8, ')')
+            ]);
+            const parser = new Parser.Parser(lexer);
+            const result = new ParseResult();
+            const exp = parser.parseFactor(result);
+            expect(result.errors.length).toBe(0);
+            expect(exp.type).toBe(NodeType.Function);
+            expect(exp.getChildCount()).toBe(1);
+            expect(exp.getChild(0).type).toBe(NodeType.Variable);
+            expect(exp.getChild(0).value).toBe('x');
+        });
         it('can correctly identify a bracketed expression', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.ParenthesisOpen, 0, '('),

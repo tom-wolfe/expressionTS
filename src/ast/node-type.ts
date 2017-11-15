@@ -16,5 +16,6 @@ export enum NodeType {
     Less = <any>'Less',
     LessOrEqual = <any>'LessOrEqual',
 
-    Number = <any>'Number'
+    Number = <any>'Number',
+    Variable = <any>'Variable'
 }

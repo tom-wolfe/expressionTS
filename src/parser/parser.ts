@@ -96,7 +96,12 @@ export class Parser extends ParserBase {
         const token = this.lexer.peekNextToken();
         switch (token.type) {
             case TokenType.Identifier:
-                root = this.parseFunction(result);
+                const identifier = this.lexer.getNextToken().value;
+                if (this.lexer.peekNextToken().type === TokenType.ParenthesisOpen) {
+                    root = this.parseFunction(result, identifier);
+                } else {
+                    root = this.parseVariable(result, identifier);
+                }
                 break;
             case TokenType.ParenthesisOpen:
                 root = this.parseBracketedExpression(result);
@@ -109,18 +114,9 @@ export class Parser extends ParserBase {
         return root;
     }
 
-    parseSimpleFactor(result: ParseResult): Ast.ExpressionNode {
-        const token = this.lexer.peekNextToken();
-        switch (token.type) {
-            case TokenType.Number: return this.parseNumber(result);
-            case TokenType.ParenthesisOpen: return this.parseBracketedExpression(result);
-            default: this.errorToken(result, TokenType.Number, token);
-        }
-    }
-
-    parseFunction(result: ParseResult): Ast.ExpressionNode {
-        const functionName = this.expectAndConsume(result, TokenType.Identifier);
-        const root = Ast.Factory.create(Ast.NodeType.Function, functionName.value);
+    parseFunction(result: ParseResult, name?: string): Ast.ExpressionNode {
+        const functionName = name || this.expectAndConsume(result, TokenType.Identifier).value;
+        const root = Ast.Factory.create(Ast.NodeType.Function, functionName);
 
         this.expectAndConsume(result, TokenType.ParenthesisOpen)
 
@@ -142,6 +138,11 @@ export class Parser extends ParserBase {
     parseNumber(result: ParseResult): Ast.ExpressionNode {
         const numberToken = this.lexer.getNextToken();
         return Ast.Factory.create(Ast.NodeType.Number, Number(numberToken.value));
+    }
+
+    parseVariable(result: ParseResult, identifier?: string): Ast.ExpressionNode {
+        const value = identifier || this.lexer.getNextToken().value;
+        return Ast.Factory.create(Ast.NodeType.Variable, value);
     }
 
     parseBracketedExpression(result: ParseResult): Ast.ExpressionNode {
