@@ -3,13 +3,6 @@ import { ILexer, TokenType } from '../lexer';
 import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
 
-const BooleanOperatorMap: { [token: string]: Ast.NodeType } = {};
-BooleanOperatorMap[TokenType.Equals] = Ast.NodeType.Equal;
-BooleanOperatorMap[TokenType.Greater] = Ast.NodeType.Greater;
-BooleanOperatorMap[TokenType.Less] = Ast.NodeType.Less;
-BooleanOperatorMap[TokenType.GreaterOrEqual] = Ast.NodeType.GreaterOrEqual;
-BooleanOperatorMap[TokenType.LessOrEqual] = Ast.NodeType.LessOrEqual;
-
 const AddOperatorMap: { [token: string]: Ast.NodeType } = {};
 AddOperatorMap[TokenType.Plus] = Ast.NodeType.Add;
 AddOperatorMap[TokenType.Minus] = Ast.NodeType.Subtract;
@@ -30,19 +23,6 @@ export class Parser extends ParserBase {
     }
 
     parseExpression(result: ParseResult): Ast.ExpressionNode {
-        let root = this.parseSimpleExpression(result);
-        const tokenType = this.lexer.peekNextToken().type;
-        if (Object.keys(BooleanOperatorMap).indexOf(tokenType.toString()) > -1) {
-            const newRoot = Ast.Factory.create(BooleanOperatorMap[tokenType]);
-            this.lexer.getNextToken();
-            newRoot.addChild(root);
-            newRoot.addChild(this.parseSimpleExpression(result));
-            root = newRoot;
-        }
-        return root;
-    }
-
-    parseSimpleExpression(result: ParseResult): Ast.ExpressionNode {
         let tokenType = this.lexer.peekNextToken().type;
         if (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
             this.lexer.getNextToken();

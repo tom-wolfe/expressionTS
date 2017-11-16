@@ -88,9 +88,7 @@ export class Interpreter implements IInterpreter<Result> {
         if (Object.keys(this.functions).indexOf(fName) === -1) {
             errors.push(new ErrorMessage(`Unknown function: ${fName}`, expression));
         }
-        const result = this.functions[fName](this, expression, errors);
-        console.log('result', result);
-        return result;
+        return this.functions[fName](this, expression, errors);
     }
 
     private expectChildCount(expression: Ast.ExpressionNode, count: number, errors: ErrorMessage[]): boolean {

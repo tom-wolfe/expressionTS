@@ -1,8 +1,4 @@
 expression = 
-    simple_expression, [ boolean_operator, simple_expression ]
-;
-
-simple_expression = 
     [ "+" | "-" ], term, { [ "+" | "-" ], term }
 ;
 
