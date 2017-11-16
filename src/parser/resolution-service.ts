@@ -1,5 +1,12 @@
-import { ResolutionContext } from './resolution-context';
-import { ResolutionService } from './resolution-service.interface';
+export class ResolutionContext {
+  functionName: string;
+  index = 0;
+}
+
+export interface ResolutionService {
+  resolveFunction(name: string, context: ResolutionContext): (...args: any[]) => any;
+  resolveVariable(name: string, context: ResolutionContext): any;
+}
 
 export class DefaultResolutionService implements ResolutionService {
   public variables: { [key: string]: any };

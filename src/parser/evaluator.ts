@@ -1,6 +1,4 @@
-import { DefaultResolutionService } from './default-resolution-service';
-import { ResolutionContext } from './resolution-context';
-import { ResolutionService } from './resolution-service.interface';
+import { DefaultResolutionService, ResolutionContext, ResolutionService } from './resolution-service';
 import { ResultEvaluator } from './result-evaluator.type';
 
 export class Evaluator {

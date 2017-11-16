@@ -2,7 +2,7 @@ import { Lexer, TokenType } from '../lexer';
 import { Evaluator } from './evaluator';
 import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
-import { ResolutionService } from './resolution-service.interface';
+import { ResolutionService } from './resolution-service';
 import { ResultEvaluator } from './result-evaluator.type';
 
 type BooleanOperator = (l: any, r: any) => any;

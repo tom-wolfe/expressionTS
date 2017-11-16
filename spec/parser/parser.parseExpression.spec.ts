@@ -1,7 +1,7 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
 import { ParseResult } from '../../src/parser/parse-result';
-import { ResolutionContext } from '../../src/parser/resolution-context';
+import { ResolutionContext } from '../../src/parser/resolution-service';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
