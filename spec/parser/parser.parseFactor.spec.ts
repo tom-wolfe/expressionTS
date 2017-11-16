@@ -1,7 +1,8 @@
-import { EvaluationContext } from '../../src/parser/evaluation-context';
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
+import { DefaultResolutionService } from '../../src/parser/default-resolution-service';
 import { ParseResult } from '../../src/parser/parse-result';
+import { ResolutionContext } from '../../src/parser/resolution-context';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -14,7 +15,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(10);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(10);
         });
         it('can correctly parse a function call', () => {
             const lexer = new MockLexer([
@@ -28,11 +29,11 @@ describe('Parser', () => {
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
 
-            const context = new EvaluationContext();
-            context.functions = {
+            const service = new DefaultResolutionService();
+            service.functions = {
                 floor: Math.floor
             };
-            expect(exp(context)).toBe(10);
+            expect(exp(service, new ResolutionContext())).toBe(10);
         });
         it('can correctly parse a function call with multiple arguments', () => {
             const lexer = new MockLexer([
@@ -48,11 +49,11 @@ describe('Parser', () => {
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
 
-            const context = new EvaluationContext();
-            context.functions = {
+            const service = new DefaultResolutionService();
+            service.functions = {
                 pow: Math.pow
             };
-            expect(exp(context)).toBe(9);
+            expect(exp(service, new ResolutionContext())).toBe(9);
         });
         it('can correctly parse a variable', () => {
             const lexer = new MockLexer([
@@ -63,11 +64,11 @@ describe('Parser', () => {
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
 
-            const context = new EvaluationContext();
-            context.variables = {
+            const service = new DefaultResolutionService();
+            service.variables = {
                 x: 6
             };
-            expect(exp(context)).toBe(6);
+            expect(exp(service, new ResolutionContext())).toBe(6);
         });
         it('can correctly parse a variable as a parameter', () => {
             const lexer = new MockLexer([
@@ -80,14 +81,14 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            const context = new EvaluationContext();
-            context.functions = {
+            const service = new DefaultResolutionService();
+            service.functions = {
                 floor: Math.floor
             };
-            context.variables = {
+            service.variables = {
                 x: 6.5
             };
-            expect(exp(context)).toBe(6);
+            expect(exp(service, new ResolutionContext())).toBe(6);
         });
         it('can correctly parse a bracketed expression', () => {
             const lexer = new MockLexer([
@@ -101,7 +102,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(10);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(10);
         });
         it('throws on unexpected token type.', () => {
             const lexer = new MockLexer([

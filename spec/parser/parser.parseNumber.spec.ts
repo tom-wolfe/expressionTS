@@ -1,3 +1,5 @@
+import { DefaultResolutionService } from '../../src/parser/default-resolution-service';
+import { ResolutionContext } from '../../src/parser/resolution-context';
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
 import { ParseResult } from '../../src/parser/parse-result';
@@ -19,7 +21,7 @@ describe('Parser', () => {
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
             const exp = parser.parseNumber(result);
-            expect(exp(null)).toBe(12);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(12);
         });
         it('can correctly parse a real number', () => {
             const lexer = new MockLexer([
@@ -28,7 +30,7 @@ describe('Parser', () => {
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
             const exp = parser.parseNumber(result);
-            expect(exp(null)).toBe(12.56);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(12.56);
         });
     });
 });

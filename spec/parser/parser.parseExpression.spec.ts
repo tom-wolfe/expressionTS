@@ -1,6 +1,7 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
 import { ParseResult } from '../../src/parser/parse-result';
+import { ResolutionContext } from '../../src/parser/resolution-context';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -15,7 +16,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(16);
+            expect(exp(null, new ResolutionContext())).toBe(16);
         });
         it('can correctly parse a simple subtraction', () => {
             const lexer = new MockLexer([
@@ -27,7 +28,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(4);
+            expect(exp(null, new ResolutionContext())).toBe(4);
         });
         it('can correctly parse a simple negation', () => {
             const lexer = new MockLexer([
@@ -38,7 +39,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(-4);
+            expect(exp(null, new ResolutionContext())).toBe(-4);
         });
         it('can correctly parse multiple operators', () => {
             const lexer = new MockLexer([
@@ -51,7 +52,7 @@ describe('Parser', () => {
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
             const exp = parser.parseExpression(result);
-            expect(exp(null)).toBe(6);
+            expect(exp(null, new ResolutionContext())).toBe(6);
         });
         it('correctly handles operator precedence (10 * 5 + 2)', () => {
             const lexer = new MockLexer([
@@ -65,7 +66,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(52);
+            expect(exp(null, new ResolutionContext())).toBe(52);
         });
     });
 });

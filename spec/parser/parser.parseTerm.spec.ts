@@ -1,6 +1,8 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
+import { DefaultResolutionService } from '../../src/parser/default-resolution-service';
 import { ParseResult } from '../../src/parser/parse-result';
+import { ResolutionContext } from '../../src/parser/resolution-context';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -15,7 +17,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseTerm(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(24);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(24);
         });
         it('can correctly identify a division', () => {
             const lexer = new MockLexer([
@@ -27,7 +29,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseTerm(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(1.5);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(1.5);
         });
         it('can correctly identify an exponent', () => {
             const lexer = new MockLexer([
@@ -39,7 +41,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseTerm(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(1296);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(1296);
         });
         it('can correctly identify a modulo', () => {
             const lexer = new MockLexer([
@@ -51,7 +53,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseTerm(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(2);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(2);
         });
         it('can correctly parse multiple operators', () => {
             const lexer = new MockLexer([
@@ -65,7 +67,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseTerm(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(12);
+            expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(12);
         });
     });
 });

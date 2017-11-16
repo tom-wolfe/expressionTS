@@ -1,8 +1,9 @@
-import { IEvaluationContext } from './evaluation-context.interface';
 import { Lexer, TokenType } from '../lexer';
+import { Evaluator } from './evaluator';
 import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
-import { ResultEvaluator } from './result-evaluator';
+import { ResolutionService } from './resolution-service.interface';
+import { ResultEvaluator } from './result-evaluator.type';
 
 type BooleanOperator = (l: any, r: any) => any;
 
@@ -19,16 +20,17 @@ MultiOperatorMap[TokenType.Percent] = (l, r) => l % r;
 export class Parser extends ParserBase {
     constructor(input: Lexer | string) { super(input); }
 
-    parse(): ParseResult {
+    parse(service?: ResolutionService): ParseResult {
         const result = new ParseResult();
-        result.evaluator = this.parseExpression(result);
+        const exp = this.parseExpression(result);
+        result.evaluator = new Evaluator(exp, service);
         return result;
     }
 
     parseExpression(result: ParseResult): ResultEvaluator {
         let tokenType = this.lexer.peekNextToken().type;
 
-        // Consume unary operator '+3' for example.
+        // Consume unary operator. '+3' for example.
         if (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
             this.lexer.getNextToken();
         }
@@ -39,7 +41,7 @@ export class Parser extends ParserBase {
         // If negate, then flip the sign. Otherwise no need.
         if (tokenType === TokenType.Minus) {
             const n = root;
-            root = (e: IEvaluationContext) => -(n(e));
+            root = (s, c) => -(n(s, c));
         }
 
         tokenType = this.lexer.peekNextToken().type;
@@ -51,7 +53,7 @@ export class Parser extends ParserBase {
 
             const l = root;
             const r = this.parseTerm(result);
-            root = e => operation(l(e), r(e));
+            root = (s, c) => operation(l(s, c), r(s, c));
             tokenType = this.lexer.peekNextToken().type;
         }
         return root;
@@ -69,7 +71,7 @@ export class Parser extends ParserBase {
 
             const l = root;
             const r = this.parseFactor(result);
-            root = (e) => operation(l(e), r(e));
+            root = (s, c) => operation(l(s, c), r(s, c));
             tokenType = this.lexer.peekNextToken().type;
         }
 
@@ -111,17 +113,24 @@ export class Parser extends ParserBase {
 
         this.expectAndConsume(result, TokenType.ParenthesisClose);
 
-        return (e: IEvaluationContext) => e.evaluateFunction(functionName)(...(args.map(a => a(e))));
+        return (s, c) => {
+            const prevFunc = c.functionName;
+            c.functionName = functionName;
+            const resolvedArgs = args.map(a => a(s, c));
+            const func = s.resolveFunction(functionName, c)(...resolvedArgs);
+            c.functionName = prevFunc;
+            return func;
+        };
     }
 
     parseNumber(result: ParseResult): ResultEvaluator {
         const numberToken = this.lexer.getNextToken();
-        return (e: IEvaluationContext) => Number(numberToken.value);
+        return (s, c) => Number(numberToken.value);
     }
 
     parseVariable(result: ParseResult, identifier?: string): ResultEvaluator {
         const value = identifier || this.lexer.getNextToken().value;
-        return (e: IEvaluationContext) => e.evaluateVariable(value);
+        return (s, c) => s.resolveVariable(value, c);
     }
 
     parseBracketedExpression(result: ParseResult): ResultEvaluator {

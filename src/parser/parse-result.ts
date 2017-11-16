@@ -1,7 +1,7 @@
 import { ErrorMessage } from './error-message';
-import { ResultEvaluator } from './result-evaluator';
+import { Evaluator } from './evaluator';
 
 export class ParseResult {
     errors: ErrorMessage[] = [];
-    evaluator: ResultEvaluator;
+    evaluator: Evaluator;
 }

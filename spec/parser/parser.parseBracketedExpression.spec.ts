@@ -1,5 +1,6 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
+import { ResolutionContext } from '../../src/parser/resolution-context';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -14,7 +15,7 @@ describe('Parser', () => {
             const result = new Parser.ParseResult();
             const exp = parser.parseBracketedExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(10);
+            expect(exp(null, new ResolutionContext())).toBe(10);
         });
         it('can correctly parse an addition', () => {
             const lexer = new MockLexer([
@@ -28,7 +29,7 @@ describe('Parser', () => {
             const result = new Parser.ParseResult();
             const exp = parser.parseBracketedExpression(result);
             expect(result.errors.length).toBe(0);
-            expect(exp(null)).toBe(16);
+            expect(exp(null, new ResolutionContext())).toBe(16);
         });
         it('throws on missing closing bracket', () => {
             const lexer = new MockLexer([
