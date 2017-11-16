@@ -1,9 +1,4 @@
 export enum TokenType {
-    Equals = <any>'=',
-    Greater = <any>'>',
-    GreaterOrEqual = <any>'>=',
-    Less = <any>'<',
-    LessOrEqual = <any>'<=',
     Comma = <any>',',
     Identifier = <any>'identifier',
     Plus = <any>'+',

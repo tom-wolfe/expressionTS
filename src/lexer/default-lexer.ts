@@ -75,7 +75,6 @@ export class DefaultLexer implements Lexer {
                 case curChar === ',': return this.createToken(TokenType.Comma, curChar);
                 case curChar === '(': return this.createToken(TokenType.ParenthesisOpen, curChar);
                 case curChar === ')': return this.createToken(TokenType.ParenthesisClose, curChar);
-                case curChar === '=': return this.createToken(TokenType.Equals, curChar);
                 case curChar === '+': return this.createToken(TokenType.Plus, curChar);
                 case curChar === '/': return this.createToken(TokenType.Slash, curChar);
                 case curChar === '-': return this.createToken(TokenType.Minus, curChar);
@@ -86,20 +85,6 @@ export class DefaultLexer implements Lexer {
                         return this.createToken(TokenType.DoubleAsterisk, curChar + this.stream.getCurrentCharacter());
                     } else {
                         return this.createToken(TokenType.Asterisk, curChar);
-                    }
-                case curChar === '>':
-                    if (this.stream.peekNextCharacter() === '=') {
-                        this.stream.getNextCharacter();
-                        return this.createToken(TokenType.GreaterOrEqual, curChar + this.stream.getCurrentCharacter());
-                    } else {
-                        return this.createToken(TokenType.Greater, curChar);
-                    }
-                case curChar === '<':
-                    if (this.stream.peekNextCharacter() === '=') {
-                        this.stream.getNextCharacter();
-                        return this.createToken(TokenType.LessOrEqual, curChar + this.stream.getCurrentCharacter());
-                    } else {
-                        return this.createToken(TokenType.Less, curChar);
                     }
                 case /\W/.test(curChar):
                     // Ignore whitespace.
