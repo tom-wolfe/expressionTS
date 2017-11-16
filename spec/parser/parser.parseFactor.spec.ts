@@ -6,7 +6,7 @@ import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
     describe('parseFactor', () => {
-        it('can correctly identify a number factor', () => {
+        it('can correctly parse a number factor', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.Number, 0, '10')
             ]);
@@ -16,7 +16,7 @@ describe('Parser', () => {
             expect(result.errors.length).toBe(0);
             expect(exp(null)).toBe(10);
         });
-        it('can correctly identify a function call', () => {
+        it('can correctly parse a function call', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.Identifier, 0, 'floor'),
                 new Token(TokenType.ParenthesisOpen, 5, '('),
@@ -34,7 +34,27 @@ describe('Parser', () => {
             };
             expect(exp(context)).toBe(10);
         });
-        it('can correctly identify a variable', () => {
+        it('can correctly parse a function call with multiple arguments', () => {
+            const lexer = new MockLexer([
+                new Token(TokenType.Identifier, 0, 'pow'),
+                new Token(TokenType.ParenthesisOpen, 5, '('),
+                new Token(TokenType.Number, 6, '3'),
+                new Token(TokenType.Comma, 7, ','),
+                new Token(TokenType.Number, 8, '2'),
+                new Token(TokenType.ParenthesisClose, 9, ')')
+            ]);
+            const parser = new Parser.Parser(lexer);
+            const result = new ParseResult();
+            const exp = parser.parseFactor(result);
+            expect(result.errors.length).toBe(0);
+
+            const context = new EvaluationContext();
+            context.functions = {
+                pow: Math.pow
+            };
+            expect(exp(context)).toBe(9);
+        });
+        it('can correctly parse a variable', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.Identifier, 0, 'x')
             ]);
@@ -49,7 +69,7 @@ describe('Parser', () => {
             };
             expect(exp(context)).toBe(6);
         });
-        it('can correctly identify a variable as a parameter', () => {
+        it('can correctly parse a variable as a parameter', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.Identifier, 0, 'floor'),
                 new Token(TokenType.ParenthesisOpen, 5, '('),
@@ -69,7 +89,7 @@ describe('Parser', () => {
             };
             expect(exp(context)).toBe(6);
         });
-        it('can correctly identify a bracketed expression', () => {
+        it('can correctly parse a bracketed expression', () => {
             const lexer = new MockLexer([
                 new Token(TokenType.ParenthesisOpen, 0, '('),
                 new Token(TokenType.Number, 1, '6'),
