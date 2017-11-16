@@ -10,12 +10,6 @@ export enum NodeType {
     Divide = <any>'Divide',
     Modulo = <any>'Modulo',
 
-    Equal = <any>'Equal',
-    Greater = <any>'Greater',
-    GreaterOrEqual = <any>'GreaterOrEqual',
-    Less = <any>'Less',
-    LessOrEqual = <any>'LessOrEqual',
-
     Number = <any>'Number',
     Variable = <any>'Variable'
 }

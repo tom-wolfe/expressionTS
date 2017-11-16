@@ -22,26 +22,21 @@ export class Interpreter implements IInterpreter<Result> {
 
     evaluate(expression: Ast.ExpressionNode, errors: ErrorMessage[]): any {
         if (!expression) { errors.push(new ErrorMessage('Unexpected null node reference found.', expression)); return 0; }
-        if (expression.type === Ast.NodeType.Number) {
-            return this.evaluateNumber(expression, errors);
-        } else if (!expression.value) {
-            let value: any = 0;
-            switch (expression.type) {
-                case Ast.NodeType.Add: value = this.evaluateAdd(expression, errors); break;
-                case Ast.NodeType.Subtract: value = this.evaluateSubtract(expression, errors); break;
-                case Ast.NodeType.Multiply: value = this.evaluateMultiply(expression, errors); break;
-                case Ast.NodeType.Divide: value = this.evaluateDivide(expression, errors); break;
-                case Ast.NodeType.Modulo: value = this.evaluateModulo(expression, errors); break;
-                case Ast.NodeType.Negate: value = this.evaluateNegate(expression, errors); break;
-                case Ast.NodeType.Exponent: value = this.evaluateExponent(expression, errors); break;
-                case Ast.NodeType.Function: value = this.evaluateFunction(expression, errors); break;
-                default:
-                    errors.push(new ErrorMessage(`Unrecognized node type '${expression.type}'.`, expression));
-                    return 0;
-            }
-            expression.value = value;
+        switch (expression.type) {
+            case Ast.NodeType.Number: return this.evaluateNumber(expression, errors);
+            case Ast.NodeType.Add: return this.evaluateAdd(expression, errors);
+            case Ast.NodeType.Divide: return this.evaluateDivide(expression, errors);
+            case Ast.NodeType.Exponent: return this.evaluateExponent(expression, errors);
+            case Ast.NodeType.Function: return this.evaluateFunction(expression, errors);
+            case Ast.NodeType.Modulo: return this.evaluateModulo(expression, errors);
+            case Ast.NodeType.Multiply: return this.evaluateMultiply(expression, errors);
+            case Ast.NodeType.Negate: return this.evaluateNegate(expression, errors);
+            case Ast.NodeType.Subtract: return this.evaluateSubtract(expression, errors);
+            case Ast.NodeType.Variable: return this.evaluateVariable(expression, errors);
+            default:
+                errors.push(new ErrorMessage(`Unrecognized node type '${expression.type}'.`, expression));
+                return 0;
         }
-        return expression.value;
     }
 
     evaluateAdd(expression: Ast.ExpressionNode, errors: ErrorMessage[]): number {
@@ -83,6 +78,11 @@ export class Interpreter implements IInterpreter<Result> {
         return expression.value;
     }
 
+    evaluateVariable(expression: Ast.ExpressionNode, errors: ErrorMessage[]): number {
+        // TODO: Look up variable value.
+        return 0;
+    }
+
     evaluateFunction(expression: Ast.ExpressionNode, errors: ErrorMessage[]): number {
         const fName = `${expression.value}`;
         if (Object.keys(this.functions).indexOf(fName) === -1) {
@@ -101,19 +101,5 @@ export class Interpreter implements IInterpreter<Result> {
             return false;
         }
         return true;
-    }
-
-    private evaluateComparison(lhs: number, expression: Ast.ExpressionNode, errors: ErrorMessage[]): boolean {
-        if (!this.expectChildCount(expression, 1, errors)) { return false };
-        switch (expression.type) {
-            case Ast.NodeType.Equal: return lhs === this.evaluate(expression.getChild(0), errors);
-            case Ast.NodeType.Greater: return lhs > this.evaluate(expression.getChild(0), errors);
-            case Ast.NodeType.GreaterOrEqual: return lhs >= this.evaluate(expression.getChild(0), errors);
-            case Ast.NodeType.Less: return lhs < this.evaluate(expression.getChild(0), errors);
-            case Ast.NodeType.LessOrEqual: return lhs <= this.evaluate(expression.getChild(0), errors);
-            default:
-                errors.push(new ErrorMessage(`Unrecognized comparison operator '${expression.type}'.`, expression));
-                return false;
-        }
     }
 }
