@@ -4,11 +4,13 @@ import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
 import { ResultEvaluator } from './result-evaluator';
 
-const AddOperatorMap: { [token: string]: (l: number, r: number) => number } = {};
+type BooleanOperator = (l: any, r: any) => any;
+
+const AddOperatorMap: { [token: string]: BooleanOperator } = {};
 AddOperatorMap[TokenType.Plus] = (l, r) => l + r;
 AddOperatorMap[TokenType.Minus] = (l, r) => l - r;
 
-const MultiOperatorMap: { [token: string]: (l: number, r: number) => number } = {};
+const MultiOperatorMap: { [token: string]: BooleanOperator } = {};
 MultiOperatorMap[TokenType.DoubleAsterisk] = (l, r) => Math.pow(l, r);
 MultiOperatorMap[TokenType.Asterisk] = (l, r) => l * r;
 MultiOperatorMap[TokenType.Slash] = (l, r) => l / r;
@@ -42,7 +44,7 @@ export class Parser extends ParserBase {
 
         tokenType = this.lexer.peekNextToken().type;
         while (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
-            const operation = AddOperatorMap[tokenType];
+            const operation: BooleanOperator = AddOperatorMap[tokenType];
 
             // Consume the operator.
             this.lexer.getNextToken();
@@ -60,7 +62,7 @@ export class Parser extends ParserBase {
 
         let tokenType = this.lexer.peekNextToken().type;
         while (Object.keys(MultiOperatorMap).indexOf(tokenType.toString()) > -1) {
-            const operation = MultiOperatorMap[tokenType];
+            const operation: BooleanOperator = MultiOperatorMap[tokenType];
 
             // Consume the operator.
             this.lexer.getNextToken();
