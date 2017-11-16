@@ -1,5 +1,5 @@
 import { IEvaluationContext } from './evaluation-context.interface';
-import { ILexer, TokenType } from '../lexer';
+import { Lexer, TokenType } from '../lexer';
 import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
 import { ResultEvaluator } from './result-evaluator';
@@ -15,7 +15,7 @@ MultiOperatorMap[TokenType.Slash] = (l, r) => l / r;
 MultiOperatorMap[TokenType.Percent] = (l, r) => l % r;
 
 export class Parser extends ParserBase {
-    constructor(input: ILexer | string) { super(input); }
+    constructor(input: Lexer | string) { super(input); }
 
     parse(): ParseResult {
         const result = new ParseResult();

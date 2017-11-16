@@ -1,22 +1,21 @@
-import { ILexer, Lexer, Token, TokenType } from '../lexer';
+import { DefaultLexer, Lexer, Token, TokenType } from '../lexer';
 import { ErrorMessage } from './error-message';
 import { ParseResult } from './parse-result';
-import { IParser } from './parser.interface';
 
-export abstract class ParserBase implements IParser {
-    protected readonly lexer: ILexer;
+export abstract class ParserBase {
+    protected readonly lexer: Lexer;
 
-    constructor(input: ILexer | string) {
+    constructor(input: Lexer | string) {
         if (this.isLexer(input)) {
             this.lexer = input;
         } else if (typeof input === 'string') {
-            this.lexer = new Lexer(input);
+            this.lexer = new DefaultLexer(input);
         } else {
             throw new Error('Unrecognized input type. input must be of type "ILexer | string".');
         }
     }
 
-    private isLexer(input: any): input is ILexer {
+    private isLexer(input: any): input is Lexer {
         return input.getNextToken;
     }
 

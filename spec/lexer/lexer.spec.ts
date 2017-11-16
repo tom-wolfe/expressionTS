@@ -1,34 +1,34 @@
 import * as Lexer from '../../src/lexer';
 import { StringCharacterStream } from '../../src/lexer/string-character-stream';
 
-describe('Lexer', () => {
+describe('DefaultLexer', () => {
     const input = 'floor(4*6**2+5*10/2+4)'
     describe('constructor', () => {
         it('does not throw for string input.', function () {
             expect(() => {
-                const lexer = new Lexer.Lexer(input);
+                const lexer = new Lexer.DefaultLexer(input);
             }).not.toThrow();
         });
         it('does not throw for stream input.', function () {
             expect(() => {
-                const lexer = new Lexer.Lexer(new StringCharacterStream(input));
+                const lexer = new Lexer.DefaultLexer(new StringCharacterStream(input));
             }).not.toThrow();
         });
         it('throws for invalid input.', function () {
             expect(() => {
-                const lexer = new Lexer.Lexer(6 as any);
+                const lexer = new Lexer.DefaultLexer(6 as any);
             }).toThrow();
         });
     });
     describe('getNextToken', () => {
         it('last token is a terminator', () => {
-            const lexer = new Lexer.Lexer('');
+            const lexer = new Lexer.DefaultLexer('');
             const token = lexer.getNextToken();
             expect(token).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 0));
         });
         it('returns correct tokens (simple)', () => {
             const inputSimple = 'floor(4*6)';
-            const lexer = new Lexer.Lexer(inputSimple);
+            const lexer = new Lexer.DefaultLexer(inputSimple);
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 6, '4'));
@@ -39,7 +39,7 @@ describe('Lexer', () => {
         });
         it('returns correct tokens (simple)', () => {
             const inputSimple = 'floor(x+y)';
-            const lexer = new Lexer.Lexer(inputSimple);
+            const lexer = new Lexer.DefaultLexer(inputSimple);
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 6, 'x'));
@@ -49,7 +49,7 @@ describe('Lexer', () => {
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 10));
         });
         it('returns correct tokens (complex)', () => {
-            const lexer = new Lexer.Lexer(input); // floor(4*6**2+5*10/2+4)
+            const lexer = new Lexer.DefaultLexer(input); // floor(4*6**2+5*10/2+4)
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 0, 'floor'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 6, '4'));
@@ -102,16 +102,16 @@ describe('Lexer', () => {
         //     expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Terminator, 38));
         // });
         it('interprets a floating point number correctly', () => {
-            const lexer = new Lexer.Lexer('2.23');
+            const lexer = new Lexer.DefaultLexer('2.23');
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 0, '2.23'));
         });
         it('throws on unrecognized tokens', () => {
-            const lexer = new Lexer.Lexer('test_face');
+            const lexer = new Lexer.DefaultLexer('test_face');
             lexer.getNextToken();
             expect(() => { lexer.getNextToken() }).toThrow();
         });
         it('skips over whitespace.', () => {
-            const lexer = new Lexer.Lexer('2  d\t10 \t + \t\t 3');
+            const lexer = new Lexer.DefaultLexer('2  d\t10 \t + \t\t 3');
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 0, '2'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Identifier, 3, 'd'));
             expect(lexer.getNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.Number, 5, '10'));
@@ -122,7 +122,7 @@ describe('Lexer', () => {
     });
     describe('peekNextToken', () => {
         it('gives next token without cycling through.', () => {
-            const lexer = new Lexer.Lexer(input);
+            const lexer = new Lexer.DefaultLexer(input);
             lexer.getNextToken();
             expect(lexer.peekNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));
             expect(lexer.peekNextToken()).toEqual(new Lexer.Token(Lexer.TokenType.ParenthesisOpen, 5, '('));

@@ -1,6 +1,6 @@
 import { Token } from './';
 
-export interface ILexer {
+export interface Lexer {
     peekNextToken(): Token;
     getNextToken(): Token;
 }

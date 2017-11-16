@@ -1,7 +1,7 @@
-import { ILexer, Token } from '../../src/lexer';
+import { Lexer, Token } from '../../src/lexer';
 import { TokenType } from '../../src/lexer/token-type';
 
-export class MockLexer implements ILexer {
+export class MockLexer implements Lexer {
     private index = -1;
     private terminator: Token;
 

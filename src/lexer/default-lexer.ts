@@ -1,10 +1,10 @@
 import { CharacterStream } from './character-stream';
-import { ILexer } from './lexer.interface';
+import { Lexer } from './lexer.interface';
 import { StringCharacterStream } from './string-character-stream';
 import { Token } from './token';
 import { TokenType } from './token-type';
 
-export class Lexer implements ILexer {
+export class DefaultLexer implements Lexer {
     protected stream: CharacterStream;
     private currentToken: Token;
     private nextToken: Token;
