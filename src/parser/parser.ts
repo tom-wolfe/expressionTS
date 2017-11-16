@@ -1,131 +1,128 @@
-import * as Ast from '../ast';
+import { IEvaluationContext } from './evaluation-context.interface';
 import { ILexer, TokenType } from '../lexer';
 import { ParseResult } from './parse-result';
 import { ParserBase } from './parser-base';
+import { ResultEvaluator } from './result-evaluator';
 
-const AddOperatorMap: { [token: string]: Ast.NodeType } = {};
-AddOperatorMap[TokenType.Plus] = Ast.NodeType.Add;
-AddOperatorMap[TokenType.Minus] = Ast.NodeType.Subtract;
+const AddOperatorMap: { [token: string]: (l: number, r: number) => number } = {};
+AddOperatorMap[TokenType.Plus] = (l, r) => l + r;
+AddOperatorMap[TokenType.Minus] = (l, r) => l - r;
 
-const MultiOperatorMap: { [token: string]: Ast.NodeType } = {};
-MultiOperatorMap[TokenType.DoubleAsterisk] = Ast.NodeType.Exponent;
-MultiOperatorMap[TokenType.Asterisk] = Ast.NodeType.Multiply;
-MultiOperatorMap[TokenType.Slash] = Ast.NodeType.Divide;
-MultiOperatorMap[TokenType.Percent] = Ast.NodeType.Modulo;
+const MultiOperatorMap: { [token: string]: (l: number, r: number) => number } = {};
+MultiOperatorMap[TokenType.DoubleAsterisk] = (l, r) => Math.pow(l, r);
+MultiOperatorMap[TokenType.Asterisk] = (l, r) => l * r;
+MultiOperatorMap[TokenType.Slash] = (l, r) => l / r;
+MultiOperatorMap[TokenType.Percent] = (l, r) => l % r;
 
 export class Parser extends ParserBase {
     constructor(input: ILexer | string) { super(input); }
 
     parse(): ParseResult {
         const result = new ParseResult();
-        result.root = this.parseExpression(result);
+        result.evaluator = this.parseExpression(result);
         return result;
     }
 
-    parseExpression(result: ParseResult): Ast.ExpressionNode {
+    parseExpression(result: ParseResult): ResultEvaluator {
         let tokenType = this.lexer.peekNextToken().type;
+
+        // Consume unary operator '+3' for example.
         if (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
             this.lexer.getNextToken();
         }
 
-        let root = this.parseTerm(result);
+        // Parse as a term. Will be a number if we've just consumed the unary token.
+        let root: ResultEvaluator = this.parseTerm(result);
 
+        // If negate, then flip the sign. Otherwise no need.
         if (tokenType === TokenType.Minus) {
-            const negateNode = Ast.Factory.create(Ast.NodeType.Negate);
-            negateNode.addChild(root);
-            root = negateNode;
+            const n = root;
+            root = (e: IEvaluationContext) => -(n(e));
         }
 
         tokenType = this.lexer.peekNextToken().type;
         while (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
-            const newRoot = Ast.Factory.create(AddOperatorMap[tokenType]);
-            newRoot.addChild(root);
+            const operation = AddOperatorMap[tokenType];
 
             // Consume the operator.
             this.lexer.getNextToken();
 
-            newRoot.addChild(this.parseTerm(result));
-
-            root = newRoot;
+            const l = root;
+            const r = this.parseTerm(result);
+            root = e => operation(l(e), r(e));
             tokenType = this.lexer.peekNextToken().type;
         }
         return root;
     }
 
-    parseTerm(result: ParseResult): Ast.ExpressionNode {
-        let root: Ast.ExpressionNode = this.parseFactor(result);
+    parseTerm(result: ParseResult): ResultEvaluator {
+        let root: ResultEvaluator = this.parseFactor(result);
 
         let tokenType = this.lexer.peekNextToken().type;
         while (Object.keys(MultiOperatorMap).indexOf(tokenType.toString()) > -1) {
-            const newRoot = Ast.Factory.create(MultiOperatorMap[tokenType]);
-            newRoot.addChild(root);
+            const operation = MultiOperatorMap[tokenType];
 
             // Consume the operator.
             this.lexer.getNextToken();
-            newRoot.addChild(this.parseFactor(result));
 
-            root = newRoot;
+            const l = root;
+            const r = this.parseFactor(result);
+            root = (e) => operation(l(e), r(e));
             tokenType = this.lexer.peekNextToken().type;
         }
 
         return root;
     }
 
-    parseFactor(result: ParseResult): Ast.ExpressionNode {
-        let root: Ast.ExpressionNode;
+    parseFactor(result: ParseResult): ResultEvaluator {
         const token = this.lexer.peekNextToken();
         switch (token.type) {
             case TokenType.Identifier:
                 const identifier = this.lexer.getNextToken().value;
                 if (this.lexer.peekNextToken().type === TokenType.ParenthesisOpen) {
-                    root = this.parseFunction(result, identifier);
+                    return this.parseFunction(result, identifier);
                 } else {
-                    root = this.parseVariable(result, identifier);
+                    return this.parseVariable(result, identifier);
                 }
-                break;
-            case TokenType.ParenthesisOpen:
-                root = this.parseBracketedExpression(result);
-                break;
-            case TokenType.Number:
-                root = this.parseNumber(result);
-                break;
+            case TokenType.ParenthesisOpen: return this.parseBracketedExpression(result);
+            case TokenType.Number: return this.parseNumber(result);
             default: this.errorToken(result, TokenType.Number, token);
         }
-        return root;
     }
 
-    parseFunction(result: ParseResult, name?: string): Ast.ExpressionNode {
+    parseFunction(result: ParseResult, name?: string): ResultEvaluator {
         const functionName = name || this.expectAndConsume(result, TokenType.Identifier).value;
-        const root = Ast.Factory.create(Ast.NodeType.Function, functionName);
 
         this.expectAndConsume(result, TokenType.ParenthesisOpen)
+
+        const args: ResultEvaluator[] = [];
 
         // Parse function arguments.
         const token = this.lexer.peekNextToken();
         if (token.type !== TokenType.ParenthesisClose) {
-            root.addChild(this.parseExpression(result));
+            args.push(this.parseExpression(result));
             while (this.lexer.peekNextToken().type === TokenType.Comma) {
                 this.lexer.getNextToken(); // Consume the comma.
-                root.addChild(this.parseExpression(result));
+                args.push(this.parseExpression(result));
             }
         }
 
         this.expectAndConsume(result, TokenType.ParenthesisClose);
 
-        return root;
+        return (e: IEvaluationContext) => e.evaluateFunction(functionName)(...(args.map(a => a(e))));
     }
 
-    parseNumber(result: ParseResult): Ast.ExpressionNode {
+    parseNumber(result: ParseResult): ResultEvaluator {
         const numberToken = this.lexer.getNextToken();
-        return Ast.Factory.create(Ast.NodeType.Number, Number(numberToken.value));
+        return (e: IEvaluationContext) => Number(numberToken.value);
     }
 
-    parseVariable(result: ParseResult, identifier?: string): Ast.ExpressionNode {
+    parseVariable(result: ParseResult, identifier?: string): ResultEvaluator {
         const value = identifier || this.lexer.getNextToken().value;
-        return Ast.Factory.create(Ast.NodeType.Variable, value);
+        return (e: IEvaluationContext) => e.evaluateVariable(value);
     }
 
-    parseBracketedExpression(result: ParseResult): Ast.ExpressionNode {
+    parseBracketedExpression(result: ParseResult): ResultEvaluator {
         this.lexer.getNextToken(); // Consume the opening bracket.
         const root = this.parseExpression(result);
         this.expectAndConsume(result, TokenType.ParenthesisClose);

@@ -1,4 +1,3 @@
-import { NodeType } from '../../src/ast/node-type';
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
 import { ParseResult } from '../../src/parser/parse-result';
@@ -19,10 +18,8 @@ describe('Parser', () => {
             ]);
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
-            const node = parser.parseNumber(result);
-            expect(result.errors.length).toBe(0);
-            expect(node.type).toBe(NodeType.Number);
-            expect(node.value).toBe(12);
+            const exp = parser.parseNumber(result);
+            expect(exp(null)).toBe(12);
         });
         it('can correctly parse a real number', () => {
             const lexer = new MockLexer([
@@ -30,10 +27,8 @@ describe('Parser', () => {
             ]);
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
-            const node = parser.parseNumber(result);
-            expect(result.errors.length).toBe(0);
-            expect(node.type).toBe(NodeType.Number);
-            expect(node.value).toBe(12.56);
+            const exp = parser.parseNumber(result);
+            expect(exp(null)).toBe(12.56);
         });
     });
 });

@@ -1,7 +1,7 @@
-import { ParseResult } from '../../src/parser/parse-result';
-import { NodeType } from '../../src/ast/node-type';
+import { EvaluationContext } from '../../src/parser/evaluation-context';
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
+import { ParseResult } from '../../src/parser/parse-result';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -14,9 +14,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp.type).toBe(NodeType.Number);
-            expect(exp.getChildCount()).toBe(0);
-            expect(exp.value).toBe(10);
+            expect(exp(null)).toBe(10);
         });
         it('can correctly identify a function call', () => {
             const lexer = new MockLexer([
@@ -29,10 +27,12 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp.type).toBe(NodeType.Function);
-            expect(exp.getChildCount()).toBe(1);
-            expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).value).toBe(10);
+
+            const context = new EvaluationContext();
+            context.functions = {
+                floor: Math.floor
+            };
+            expect(exp(context)).toBe(10);
         });
         it('can correctly identify a variable', () => {
             const lexer = new MockLexer([
@@ -42,8 +42,12 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp.type).toBe(NodeType.Variable);
-            expect(exp.getChildCount()).toBe(0);
+
+            const context = new EvaluationContext();
+            context.variables = {
+                x: 6
+            };
+            expect(exp(context)).toBe(6);
         });
         it('can correctly identify a variable as a parameter', () => {
             const lexer = new MockLexer([
@@ -56,10 +60,14 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp.type).toBe(NodeType.Function);
-            expect(exp.getChildCount()).toBe(1);
-            expect(exp.getChild(0).type).toBe(NodeType.Variable);
-            expect(exp.getChild(0).value).toBe('x');
+            const context = new EvaluationContext();
+            context.functions = {
+                floor: Math.floor
+            };
+            context.variables = {
+                x: 6.5
+            };
+            expect(exp(context)).toBe(6);
         });
         it('can correctly identify a bracketed expression', () => {
             const lexer = new MockLexer([
@@ -73,12 +81,7 @@ describe('Parser', () => {
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
-            expect(exp.type).toBe(NodeType.Add);
-            expect(exp.getChildCount()).toBe(2);
-            expect(exp.getChild(0).type).toBe(NodeType.Number);
-            expect(exp.getChild(0).value).toBe(6);
-            expect(exp.getChild(1).type).toBe(NodeType.Number);
-            expect(exp.getChild(1).value).toBe(4);
+            expect(exp(null)).toBe(10);
         });
         it('throws on unexpected token type.', () => {
             const lexer = new MockLexer([

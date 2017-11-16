@@ -1,7 +1,7 @@
-import * as Ast from '../ast';
 import { ErrorMessage } from './error-message';
+import { ResultEvaluator } from './result-evaluator';
 
 export class ParseResult {
-    root: Ast.ExpressionNode;
     errors: ErrorMessage[] = [];
+    evaluator: ResultEvaluator;
 }
