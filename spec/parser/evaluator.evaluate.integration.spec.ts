@@ -1,6 +1,4 @@
-import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
-import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Evaluator (integration)', () => {
     describe('evaluate', () => {
@@ -9,6 +7,22 @@ describe('Evaluator (integration)', () => {
             const result = parser.parse();
             expect(result.errors.length).toBe(0);
             expect(result.evaluator.evaluate()).toBe(2);
+        });
+        it('Can parse and evaluate a function.', () => {
+            const parser = new Parser.Parser('abs(-1)');
+            const result = parser.parse();
+            expect(result.errors.length).toBe(0);
+            expect(result.evaluator.evaluate()).toBe(1);
+        });
+        it('Can parse and evaluate a function with variable.', () => {
+            const parser = new Parser.Parser('abs(x)');
+            const service = new Parser.DefaultResolutionService();
+            service.variables = {
+                x: -3
+            };
+            const result = parser.parse(service);
+            expect(result.errors.length).toBe(0);
+            expect(result.evaluator.evaluate()).toBe(3);
         });
     });
 });

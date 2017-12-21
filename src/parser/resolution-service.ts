@@ -40,7 +40,7 @@ export class DefaultResolutionService implements ResolutionService {
   }
 
   public resolveFunction(name: string, context: ResolutionContext): (...args: any[]) => any {
-    return this.functions[name];
+    return this._mergedFunctions[name];
   }
   public resolveVariable(name: string, context: ResolutionContext): any {
     return this.variables[name];
