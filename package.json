@@ -9,6 +9,7 @@
     "coverage": "istanbul coverage",
     "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage --verbose",
     "lint": "tslint -p ./tsconfig.json",
+    "lint:fix": "tslint -p ./tsconfig.json --fix",
     "tsc": "tsc --project ./tsconfig.build.json",
     "test": "npm run lint && karma start --single-run",
     "test_watch": "karma start"
@@ -30,13 +31,13 @@
   "homepage": "https://github.com/trwolfe13/expressionTS#readme",
   "devDependencies": {
     "@types/jasmine": "^2.8.2",
-    "codacy-coverage": "^2.0.2",
+    "codacy-coverage": "^3.0.0",
     "istanbul": "^0.4.5",
     "jasmine-core": "2.5.2",
-    "karma": "^1.7.0",
+    "karma": "^2.0.5",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.0",
-    "karma-typescript": "^3.0.4",
+    "karma-typescript": "^3.0.13",
     "rimraf": "^2.6.1",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1"
