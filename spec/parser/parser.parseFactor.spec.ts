@@ -28,10 +28,9 @@ describe('Parser', () => {
       const exp = parser.parseFactor(result);
       expect(result.errors.length).toBe(0);
 
-      const service = new DefaultResolutionService();
-      service.environment = {
+      const service = new DefaultResolutionService({
         floor: Math.floor
-      };
+      });
       expect(exp(service, new ResolutionContext())).toBe(10);
     });
     it('can correctly parse a function call with multiple arguments', () => {
@@ -48,10 +47,9 @@ describe('Parser', () => {
       const exp = parser.parseFactor(result);
       expect(result.errors.length).toBe(0);
 
-      const service = new DefaultResolutionService();
-      service.environment = {
+      const service = new DefaultResolutionService({
         pow: Math.pow
-      };
+      });
       expect(exp(service, new ResolutionContext())).toBe(9);
     });
     it('can correctly parse a variable', () => {
@@ -63,10 +61,9 @@ describe('Parser', () => {
       const exp = parser.parseFactor(result);
       expect(result.errors.length).toBe(0);
 
-      const service = new DefaultResolutionService();
-      service.environment = {
+      const service = new DefaultResolutionService({
         x: 6
-      };
+      });
       expect(exp(service, new ResolutionContext())).toBe(6);
     });
     it('can correctly parse a variable as a parameter', () => {
@@ -80,11 +77,10 @@ describe('Parser', () => {
       const result = new ParseResult();
       const exp = parser.parseFactor(result);
       expect(result.errors.length).toBe(0);
-      const service = new DefaultResolutionService();
-      service.environment = {
+      const service = new DefaultResolutionService({
         floor: Math.floor,
         x: 6.5
-      };
+      });
       expect(exp(service, new ResolutionContext())).toBe(6);
     });
     it('can correctly parse a dotted variable as a parameter', () => {
@@ -100,11 +96,10 @@ describe('Parser', () => {
       const result = new ParseResult();
       const exp = parser.parseFactor(result);
       expect(result.errors.length).toBe(0);
-      const service = new DefaultResolutionService();
-      service.environment = {
+      const service = new DefaultResolutionService({
         floor: Math.floor,
         foo: { bar: 6.5 }
-      };
+      });
       expect(exp(service, new ResolutionContext())).toBe(6);
     });
     it('can correctly parse a bracketed expression', () => {
