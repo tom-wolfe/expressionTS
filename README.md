@@ -17,7 +17,7 @@ npm install --save expressionTS
 ### Usage
 
 ```typescript
-const environment = new DefaultResolutionService({
+const environment = new DefaultResolutionContext({
   x: 10,
   foo: {
     bar: 6

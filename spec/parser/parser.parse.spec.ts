@@ -14,7 +14,7 @@ describe('Parser', () => {
       const result = parser.parse();
       expect(result.errors.length).toBe(0);
 
-      expect(result.evaluator).not.toBeNull();
+      expect(result.expression).not.toBeNull();
     });
     it('correctly increments the index on multiple executions.', () => {
       const lexer = new MockLexer([
@@ -25,8 +25,8 @@ describe('Parser', () => {
       const parser = new Parser.Parser(lexer);
       const result = parser.parse();
       expect(result.errors.length).toBe(0);
-      expect(result.evaluator).not.toBeNull();
-      expect(result.evaluator.evaluate());
+      expect(result.expression).not.toBeNull();
+      expect(result.expression());
     });
   });
 });

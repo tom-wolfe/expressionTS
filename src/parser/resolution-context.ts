@@ -1,15 +1,8 @@
-export class ResolutionContext {
-  functionName: string[];
-  index = 0;
+export interface ResolutionContext {
+  resolve(name: string[]): any;
 }
 
-export interface ResolutionService {
-  resolve(name: string[], context: ResolutionContext): any;
-}
-
-export interface FunctionMap { [key: string]: (...args: any[]) => any };
-
-const DEFAULT_FUNCTIONS: FunctionMap = {
+const DEFAULT_FUNCTIONS: { [key: string]: any } = {
   abs: Math.abs,
   pow: Math.pow,
   floor: Math.floor,
@@ -23,7 +16,7 @@ const DEFAULT_FUNCTIONS: FunctionMap = {
   sqrt: Math.sqrt
 };
 
-export class DefaultResolutionService implements ResolutionService {
+export class DefaultResolutionContext implements ResolutionContext {
   private _environment: { [key: string]: any } = {};
   private _mergedEnvironment: { [key: string]: any } = DEFAULT_FUNCTIONS;
 
@@ -40,7 +33,7 @@ export class DefaultResolutionService implements ResolutionService {
     this._mergedEnvironment = Object.assign({}, DEFAULT_FUNCTIONS, this._environment);
   }
 
-  public resolve(name: string[], context: ResolutionContext): any {
+  public resolve(name: string[]): any {
     return name.reduce((p, c) => p[c], this._mergedEnvironment);
   }
 }

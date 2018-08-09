@@ -1,7 +1,5 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
-import { ParseResult } from '../../src/parser/parse-result';
-import { ResolutionContext } from '../../src/parser/resolution-service';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -13,10 +11,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 3, '6')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseSimpleExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(16);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(16);
     });
     it('can correctly parse a simple subtraction', () => {
       const lexer = new MockLexer([
@@ -25,10 +23,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 3, '6')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseSimpleExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(4);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(4);
     });
     it('can correctly parse a simple negation', () => {
       const lexer = new MockLexer([
@@ -36,10 +34,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 1, '4')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseSimpleExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(-4);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(-4);
     });
     it('can correctly parse multiple operators', () => {
       const lexer = new MockLexer([
@@ -50,9 +48,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 4, '1')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseSimpleExpression(result);
-      expect(exp(null, new ResolutionContext())).toBe(6);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(errors);
+      expect(exp()).toBe(6);
     });
     it('correctly handles operator precedence (10 * 5 + 2)', () => {
       const lexer = new MockLexer([
@@ -63,10 +61,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 5, '2'),
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseSimpleExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(52);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(52);
     });
   });
 });

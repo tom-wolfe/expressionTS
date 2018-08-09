@@ -21,26 +21,26 @@ export abstract class ParserBase {
 
   abstract parse(): ParseResult;
 
-  protected expectAndConsume(result: ParseResult, expected: TokenType, actual?: Token): Token {
-    this.expect(result, expected, actual);
+  protected expectAndConsume(errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
+    this.expect(errors, expected, actual);
     return this.lexer.getNextToken();
   }
 
-  protected expect(result: ParseResult, expected: TokenType, actual?: Token): Token {
+  protected expect(errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
     actual = actual || this.lexer.peekNextToken();
     if (actual.type !== expected) {
-      this.errorToken(result, expected, actual);
+      this.errorToken(errors, expected, actual);
     }
     return actual;
   }
 
-  protected errorToken(result: ParseResult, expected: TokenType, actual: Token) {
+  protected errorToken(errors: ErrorMessage[], expected: TokenType, actual: Token) {
     let message = `Error at position ${actual.position}.`;
     message += ` Expected token of type ${expected}, found token of type ${actual.type} of value '${actual.value}'.`;
-    this.errorMessage(result, message, actual);
+    this.errorMessage(errors, message, actual);
   }
 
-  protected errorMessage(result: ParseResult, message: string, token: Token) {
-    result.errors.push(new ErrorMessage(message, token, new Error().stack));
+  protected errorMessage(errors: ErrorMessage[], message: string, token: Token) {
+    errors.push(new ErrorMessage(message, token, new Error().stack));
   }
 }

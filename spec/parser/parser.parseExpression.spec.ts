@@ -1,7 +1,5 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
-import { ParseResult } from '../../src/parser/parse-result';
-import { ResolutionContext } from '../../src/parser/resolution-service';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -13,10 +11,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 3, '6')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(true);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(true);
     });
     it('can correctly parse a simple less than or equal to', () => {
       const lexer = new MockLexer([
@@ -25,10 +23,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 3, '6')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(false);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(false);
     });
     it('correctly handles operator precedence (10 * 5 + 2)', () => {
       const lexer = new MockLexer([
@@ -39,10 +37,10 @@ describe('Parser', () => {
         new Token(TokenType.Number, 5, '2'),
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(52);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(52);
     });
   });
 });

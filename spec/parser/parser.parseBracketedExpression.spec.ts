@@ -1,6 +1,5 @@
 import { Token, TokenType } from '../../src/lexer';
 import * as Parser from '../../src/parser';
-import { ResolutionContext } from '../../src/parser/resolution-service';
 import { MockLexer } from '../helpers/mock-lexer';
 
 describe('Parser', () => {
@@ -12,10 +11,10 @@ describe('Parser', () => {
         new Token(TokenType.ParenthesisClose, 3, ')')
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new Parser.ParseResult();
-      const exp = parser.parseBracketedExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(10);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseBracketedExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(10);
     });
     it('can correctly parse an addition', () => {
       const lexer = new MockLexer([
@@ -26,10 +25,10 @@ describe('Parser', () => {
         new Token(TokenType.ParenthesisClose, 5, ')'),
       ]);
       const parser = new Parser.Parser(lexer);
-      const result = new Parser.ParseResult();
-      const exp = parser.parseBracketedExpression(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(null, new ResolutionContext())).toBe(16);
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseBracketedExpression(errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(16);
     });
     it('throws on missing closing bracket', () => {
       const lexer = new MockLexer([
@@ -39,10 +38,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 4, '6')
       ]);
       const parser = new Parser.Parser(lexer);
-
-      const result = new Parser.ParseResult();
-      const exp = parser.parseBracketedExpression(result);
-      expect(result.errors.length).toBeGreaterThanOrEqual(1);
+      const errors: Parser.ErrorMessage[] = [];
+      parser.parseBracketedExpression(errors);
+      expect(errors.length).toBeGreaterThanOrEqual(1);
     });
   });
 });
