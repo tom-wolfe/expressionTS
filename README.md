@@ -16,7 +16,17 @@ npm install --save expressionTS
 
 ### Usage
 
-[TODO]
+```typescript
+const environment = new DefaultResolutionService({
+  x: 10,
+  foo: {
+    bar: 6
+  }
+});
+const parser = new Parser('x * foo.bar');
+const result = parser.parse(environment);
+console.log(result.evaluator.evaluate()); // Logs 60.
+```
 
 ## Installing Dependencies
 

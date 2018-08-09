@@ -27,6 +27,10 @@ export class DefaultResolutionService implements ResolutionService {
   private _environment: { [key: string]: any } = {};
   private _mergedEnvironment: { [key: string]: any } = DEFAULT_FUNCTIONS;
 
+  constructor(environment?: { [key: string]: any }) {
+    this.environment = environment;
+  }
+
   public get environment(): { [key: string]: any } {
     return this._environment
   }
