@@ -9,6 +9,7 @@
     "coverage": "istanbul coverage",
     "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage --verbose",
     "lint": "tslint -p ./tsconfig.json",
+    "lint:fix": "tslint -p ./tsconfig.json --fix",
     "tsc": "tsc --project ./tsconfig.build.json",
     "test": "npm run lint && karma start --single-run",
     "test_watch": "karma start"
