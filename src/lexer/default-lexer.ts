@@ -79,6 +79,7 @@ export class DefaultLexer implements Lexer {
                 case curChar === '/': return this.createToken(TokenType.Slash, curChar);
                 case curChar === '-': return this.createToken(TokenType.Minus, curChar);
                 case curChar === '%': return this.createToken(TokenType.Percent, curChar);
+                case curChar === '.': return this.createToken(TokenType.Period, curChar);
                 case curChar === '*':
                     if (this.stream.peekNextCharacter() === '*') {
                         this.stream.getNextCharacter();

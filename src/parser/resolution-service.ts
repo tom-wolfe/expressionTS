@@ -1,11 +1,10 @@
 export class ResolutionContext {
-  functionName: string;
+  functionName: string[];
   index = 0;
 }
 
 export interface ResolutionService {
-  resolveFunction(name: string, context: ResolutionContext): (...args: any[]) => any;
-  resolveVariable(name: string, context: ResolutionContext): any;
+  resolve(name: string[], context: ResolutionContext): any;
 }
 
 export interface FunctionMap { [key: string]: (...args: any[]) => any };
@@ -25,24 +24,19 @@ const DEFAULT_FUNCTIONS: FunctionMap = {
 };
 
 export class DefaultResolutionService implements ResolutionService {
-  private _mergedFunctions: FunctionMap = DEFAULT_FUNCTIONS;
-  private _functions: FunctionMap = {};
+  private _environment: { [key: string]: any } = {};
+  private _mergedEnvironment: { [key: string]: any } = DEFAULT_FUNCTIONS;
 
-  public variables: { [key: string]: any } = {};
-
-  public get functions(): FunctionMap {
-    return this._functions;
+  public get environment(): { [key: string]: any } {
+    return this._environment
   }
 
-  public set functions(value: FunctionMap) {
-    this._functions = value;
-    this._mergedFunctions = Object.assign({}, DEFAULT_FUNCTIONS, this._functions);
+  public set environment(value: { [key: string]: any }) {
+    this._environment = value;
+    this._mergedEnvironment = Object.assign({}, DEFAULT_FUNCTIONS, this._environment);
   }
 
-  public resolveFunction(name: string, context: ResolutionContext): (...args: any[]) => any {
-    return this._mergedFunctions[name];
-  }
-  public resolveVariable(name: string, context: ResolutionContext): any {
-    return this.variables[name];
+  public resolve(name: string[], context: ResolutionContext): any {
+    return name.reduce((p, c) => p[c], this._mergedEnvironment);
   }
 }

@@ -17,7 +17,7 @@ describe('Evaluator (integration)', () => {
         it('Can parse and evaluate a function with variable.', () => {
             const parser = new Parser.Parser('abs(x)');
             const service = new Parser.DefaultResolutionService();
-            service.variables = {
+            service.environment = {
                 x: -3
             };
             const result = parser.parse(service);

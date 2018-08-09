@@ -14,11 +14,11 @@ factor =
 ;
 
 variable = 
-    identifier
+    dotted_identifier
 ;
 
 function_call = 
-    identifier, "(", expression, ")"
+    dotted_identifier, "(", expression, ")"
 ;
 
 bracketed_expression = 
@@ -28,3 +28,6 @@ bracketed_expression =
 boolean_operator = 
     "=" | "<" | ">" | "<=" | ">="
 ;
+
+dotted_identifier = 
+    identifier, { ".", identifier }

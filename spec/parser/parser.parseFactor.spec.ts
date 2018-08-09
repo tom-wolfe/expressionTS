@@ -29,7 +29,7 @@ describe('Parser', () => {
             expect(result.errors.length).toBe(0);
 
             const service = new DefaultResolutionService();
-            service.functions = {
+            service.environment = {
                 floor: Math.floor
             };
             expect(exp(service, new ResolutionContext())).toBe(10);
@@ -49,7 +49,7 @@ describe('Parser', () => {
             expect(result.errors.length).toBe(0);
 
             const service = new DefaultResolutionService();
-            service.functions = {
+            service.environment = {
                 pow: Math.pow
             };
             expect(exp(service, new ResolutionContext())).toBe(9);
@@ -64,7 +64,7 @@ describe('Parser', () => {
             expect(result.errors.length).toBe(0);
 
             const service = new DefaultResolutionService();
-            service.variables = {
+            service.environment = {
                 x: 6
             };
             expect(exp(service, new ResolutionContext())).toBe(6);
@@ -74,18 +74,36 @@ describe('Parser', () => {
                 new Token(TokenType.Identifier, 0, 'floor'),
                 new Token(TokenType.ParenthesisOpen, 5, '('),
                 new Token(TokenType.Identifier, 6, 'x'),
-                new Token(TokenType.ParenthesisClose, 8, ')')
+                new Token(TokenType.ParenthesisClose, 7, ')')
             ]);
             const parser = new Parser.Parser(lexer);
             const result = new ParseResult();
             const exp = parser.parseFactor(result);
             expect(result.errors.length).toBe(0);
             const service = new DefaultResolutionService();
-            service.functions = {
-                floor: Math.floor
-            };
-            service.variables = {
+            service.environment = {
+                floor: Math.floor,
                 x: 6.5
+            };
+            expect(exp(service, new ResolutionContext())).toBe(6);
+        });
+        it('can correctly parse a dotted variable as a parameter', () => {
+            const lexer = new MockLexer([
+                new Token(TokenType.Identifier, 0, 'floor'),
+                new Token(TokenType.ParenthesisOpen, 5, '('),
+                new Token(TokenType.Identifier, 6, 'foo'),
+                new Token(TokenType.Period, 9, '.'),
+                new Token(TokenType.Identifier, 10, 'bar'),
+                new Token(TokenType.ParenthesisClose, 13, ')')
+            ]);
+            const parser = new Parser.Parser(lexer);
+            const result = new ParseResult();
+            const exp = parser.parseFactor(result);
+            expect(result.errors.length).toBe(0);
+            const service = new DefaultResolutionService();
+            service.environment = {
+                floor: Math.floor,
+                foo: { bar: 6.5 }
             };
             expect(exp(service, new ResolutionContext())).toBe(6);
         });

@@ -82,7 +82,7 @@ export class Parser extends ParserBase {
         const token = this.lexer.peekNextToken();
         switch (token.type) {
             case TokenType.Identifier:
-                const identifier = this.lexer.getNextToken().value;
+                const identifier = this.parseDottedIdentifier(result);
                 if (this.lexer.peekNextToken().type === TokenType.ParenthesisOpen) {
                     return this.parseFunction(result, identifier);
                 } else {
@@ -94,8 +94,8 @@ export class Parser extends ParserBase {
         }
     }
 
-    parseFunction(result: ParseResult, name?: string): ResultEvaluator {
-        const functionName = name || this.expectAndConsume(result, TokenType.Identifier).value;
+    parseFunction(result: ParseResult, name?: string[]): ResultEvaluator {
+        const functionName = name || this.parseDottedIdentifier(result);
 
         this.expectAndConsume(result, TokenType.ParenthesisOpen)
 
@@ -117,7 +117,7 @@ export class Parser extends ParserBase {
             const prevFunc = c.functionName;
             c.functionName = functionName;
             const resolvedArgs = args.map(a => a(s, c));
-            const func = s.resolveFunction(functionName, c)(...resolvedArgs);
+            const func = s.resolve(functionName, c)(...resolvedArgs);
             c.functionName = prevFunc;
             return func;
         };
@@ -128,9 +128,9 @@ export class Parser extends ParserBase {
         return (s, c) => Number(numberToken.value);
     }
 
-    parseVariable(result: ParseResult, identifier?: string): ResultEvaluator {
-        const value = identifier || this.lexer.getNextToken().value;
-        return (s, c) => s.resolveVariable(value, c);
+    parseVariable(result: ParseResult, identifier?: string[]): ResultEvaluator {
+        const value = identifier || this.parseDottedIdentifier(result);
+        return (s, c) => s.resolve(value, c);
     }
 
     parseBracketedExpression(result: ParseResult): ResultEvaluator {
@@ -138,5 +138,15 @@ export class Parser extends ParserBase {
         const root = this.parseExpression(result);
         this.expectAndConsume(result, TokenType.ParenthesisClose);
         return root;
+    }
+
+    parseDottedIdentifier(result: ParseResult): string[] {
+        const parts: string[] = [];
+        parts.push(this.expectAndConsume(result, TokenType.Identifier).value);
+        while (this.lexer.peekNextToken().type === TokenType.Period) {
+            this.lexer.getNextToken();
+            parts.push(this.expectAndConsume(result, TokenType.Identifier).value);
+        }
+        return parts;
     }
 }
