@@ -1,151 +1,171 @@
 import { Lexer, TokenType } from '../lexer';
-import { Evaluator } from './evaluator';
-import { ParseResult } from './parse-result';
+import { ErrorMessage } from './error-message';
+import { Expression } from './expression';
 import { ParserBase } from './parser-base';
-import { ResolutionService } from './resolution-service';
 import { ResultEvaluator } from './result-evaluator.type';
 
+type UnaryOperator = (n: any) => any;
 type BooleanOperator = (l: any, r: any) => any;
 
-const AddOperatorMap: { [token: string]: BooleanOperator } = {};
-AddOperatorMap[TokenType.Plus] = (l, r) => l + r;
-AddOperatorMap[TokenType.Minus] = (l, r) => l - r;
+const UnaryOperatorMap: { [token: string]: UnaryOperator } = {
+  [TokenType.Plus]: n => +n,
+  [TokenType.Minus]: n => -n,
+  [TokenType.Exclamation]: n => !n,
+};
 
-const MultiOperatorMap: { [token: string]: BooleanOperator } = {};
-MultiOperatorMap[TokenType.DoubleAsterisk] = (l, r) => Math.pow(l, r);
-MultiOperatorMap[TokenType.Asterisk] = (l, r) => l * r;
-MultiOperatorMap[TokenType.Slash] = (l, r) => l / r;
-MultiOperatorMap[TokenType.Percent] = (l, r) => l % r;
+const AddOperatorMap: { [token: string]: BooleanOperator } = {
+  [TokenType.Plus]: (l, r) => l + r,
+  [TokenType.Minus]: (l, r) => l - r
+};
+
+const MultiOperatorMap: { [token: string]: BooleanOperator } = {
+  [TokenType.Asterisk]: (l, r) => l * r,
+  [TokenType.Slash]: (l, r) => l / r,
+  [TokenType.Percent]: (l, r) => l % r
+};
+
+const BooleanOperatorMap: { [token: string]: BooleanOperator } = {
+  [TokenType.Equals]: (l, r) => l === r,
+  [TokenType.LessThan]: (l, r) => l < r,
+  [TokenType.LessThanEquals]: (l, r) => l <= r,
+  [TokenType.GreaterThan]: (l, r) => l > r,
+  [TokenType.GreaterThanEquals]: (l, r) => l >= r,
+  [TokenType.Pipe]: (l, r) => l || r,
+  [TokenType.Ampersand]: (l, r) => l && r
+};
 
 export class Parser extends ParserBase {
-  constructor(input: Lexer | string) { super(input); }
 
-  parse(service?: ResolutionService): ParseResult {
-    const result = new ParseResult();
-    const exp = this.parseExpression(result);
-    result.evaluator = new Evaluator(exp, service);
-    return result;
+  protected parseCore(lexer: Lexer, errors: ErrorMessage[]): Expression {
+    return this.parseExpression(lexer, errors)
+  };
+
+  parseExpression(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    const lhs = this.parseSimpleExpression(lexer, errors);
+
+    const operator = BooleanOperatorMap[lexer.peekNextToken().type];
+    if (!operator) { return lhs; }
+    lexer.getNextToken();
+
+    const rhs = this.parseSimpleExpression(lexer, errors);
+    return s => operator(lhs(s), rhs(s));
   }
 
-  parseExpression(result: ParseResult): ResultEvaluator {
-    let tokenType = this.lexer.peekNextToken().type;
+  parseSimpleExpression(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    let tokenType = lexer.peekNextToken().type;
+
+    const unaryOp = UnaryOperatorMap[tokenType];
 
     // Consume unary operator. '+3' for example.
-    if (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
-      this.lexer.getNextToken();
-    }
+    if (unaryOp) { lexer.getNextToken(); }
 
     // Parse as a term. Will be a number if we've just consumed the unary token.
-    let root: ResultEvaluator = this.parseTerm(result);
+    let root: ResultEvaluator = this.parseTerm(lexer, errors);
 
-    // If negate, then flip the sign. Otherwise no need.
-    if (tokenType === TokenType.Minus) {
+    // If we had a unary operator, then add it in.
+    if (unaryOp) {
       const n = root;
-      root = (s, c) => -(n(s, c));
+      root = s => unaryOp(n(s));
     }
 
-    tokenType = this.lexer.peekNextToken().type;
-    while (Object.keys(AddOperatorMap).indexOf(tokenType.toString()) > -1) {
+    tokenType = lexer.peekNextToken().type;
+    while (Object.keys(AddOperatorMap).indexOf(tokenType) > -1) {
       const operation: BooleanOperator = AddOperatorMap[tokenType];
 
       // Consume the operator.
-      this.lexer.getNextToken();
+      lexer.getNextToken();
 
       const l = root;
-      const r = this.parseTerm(result);
-      root = (s, c) => operation(l(s, c), r(s, c));
-      tokenType = this.lexer.peekNextToken().type;
+      const r = this.parseTerm(lexer, errors);
+      root = s => operation(l(s), r(s));
+      tokenType = lexer.peekNextToken().type;
     }
     return root;
   }
 
-  parseTerm(result: ParseResult): ResultEvaluator {
-    let root: ResultEvaluator = this.parseFactor(result);
+  parseTerm(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    let root: ResultEvaluator = this.parseFactor(lexer, errors);
 
-    let tokenType = this.lexer.peekNextToken().type;
-    while (Object.keys(MultiOperatorMap).indexOf(tokenType.toString()) > -1) {
+    let tokenType = lexer.peekNextToken().type;
+    while (Object.keys(MultiOperatorMap).indexOf(tokenType) > -1) {
       const operation: BooleanOperator = MultiOperatorMap[tokenType];
 
       // Consume the operator.
-      this.lexer.getNextToken();
+      lexer.getNextToken();
 
       const l = root;
-      const r = this.parseFactor(result);
-      root = (s, c) => operation(l(s, c), r(s, c));
-      tokenType = this.lexer.peekNextToken().type;
+      const r = this.parseFactor(lexer, errors);
+      root = s => operation(l(s), r(s));
+      tokenType = lexer.peekNextToken().type;
     }
 
     return root;
   }
 
-  parseFactor(result: ParseResult): ResultEvaluator {
-    const token = this.lexer.peekNextToken();
+  parseFactor(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    const token = lexer.peekNextToken();
     switch (token.type) {
       case TokenType.Identifier:
-        const identifier = this.parseDottedIdentifier(result);
-        if (this.lexer.peekNextToken().type === TokenType.ParenthesisOpen) {
-          return this.parseFunction(result, identifier);
+        const identifier = this.parseDottedIdentifier(lexer, errors);
+        if (lexer.peekNextToken().type === TokenType.ParenthesisOpen) {
+          return this.parseFunction(lexer, errors, identifier);
         } else {
-          return this.parseVariable(result, identifier);
+          return this.parseVariable(lexer, errors, identifier);
         }
-      case TokenType.ParenthesisOpen: return this.parseBracketedExpression(result);
-      case TokenType.Number: return this.parseNumber(result);
-      default: this.errorToken(result, TokenType.Number, token);
+      case TokenType.ParenthesisOpen: return this.parseBracketedExpression(lexer, errors);
+      case TokenType.Number: return this.parseNumber(lexer, errors);
+      default: this.errorToken(errors, TokenType.Number, token);
     }
   }
 
-  parseFunction(result: ParseResult, name?: string[]): ResultEvaluator {
-    const functionName = name || this.parseDottedIdentifier(result);
+  parseFunction(lexer: Lexer, errors: ErrorMessage[], name?: string[]): ResultEvaluator {
+    const functionName = name || this.parseDottedIdentifier(lexer, errors);
 
-    this.expectAndConsume(result, TokenType.ParenthesisOpen)
+    this.expectAndConsume(lexer, errors, TokenType.ParenthesisOpen)
 
     const args: ResultEvaluator[] = [];
 
     // Parse function arguments.
-    const token = this.lexer.peekNextToken();
+    const token = lexer.peekNextToken();
     if (token.type !== TokenType.ParenthesisClose) {
-      args.push(this.parseExpression(result));
-      while (this.lexer.peekNextToken().type === TokenType.Comma) {
-        this.lexer.getNextToken(); // Consume the comma.
-        args.push(this.parseExpression(result));
+      args.push(this.parseExpression(lexer, errors));
+      while (lexer.peekNextToken().type === TokenType.Comma) {
+        lexer.getNextToken(); // Consume the comma.
+        args.push(this.parseExpression(lexer, errors));
       }
     }
 
-    this.expectAndConsume(result, TokenType.ParenthesisClose);
+    this.expectAndConsume(lexer, errors, TokenType.ParenthesisClose);
 
-    return (s, c) => {
-      const prevFunc = c.functionName;
-      c.functionName = functionName;
-      const resolvedArgs = args.map(a => a(s, c));
-      const func = s.resolve(functionName, c)(...resolvedArgs);
-      c.functionName = prevFunc;
-      return func;
+    return s => {
+      const resolvedArgs = args.map(a => a(s));
+      return s.resolve(functionName)(...resolvedArgs);
     };
   }
 
-  parseNumber(result: ParseResult): ResultEvaluator {
-    const numberToken = this.lexer.getNextToken();
-    return (s, c) => Number(numberToken.value);
+  parseNumber(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    const numberToken = lexer.getNextToken();
+    return () => Number(numberToken.value);
   }
 
-  parseVariable(result: ParseResult, identifier?: string[]): ResultEvaluator {
-    const value = identifier || this.parseDottedIdentifier(result);
-    return (s, c) => s.resolve(value, c);
+  parseVariable(lexer: Lexer, errors: ErrorMessage[], identifier?: string[]): ResultEvaluator {
+    const value = identifier || this.parseDottedIdentifier(lexer, errors);
+    return s => s.resolve(value);
   }
 
-  parseBracketedExpression(result: ParseResult): ResultEvaluator {
-    this.lexer.getNextToken(); // Consume the opening bracket.
-    const root = this.parseExpression(result);
-    this.expectAndConsume(result, TokenType.ParenthesisClose);
+  parseBracketedExpression(lexer: Lexer, errors: ErrorMessage[]): ResultEvaluator {
+    lexer.getNextToken(); // Consume the opening bracket.
+    const root = this.parseExpression(lexer, errors);
+    this.expectAndConsume(lexer, errors, TokenType.ParenthesisClose);
     return root;
   }
 
-  parseDottedIdentifier(result: ParseResult): string[] {
+  parseDottedIdentifier(lexer: Lexer, errors: ErrorMessage[]): string[] {
     const parts: string[] = [];
-    parts.push(this.expectAndConsume(result, TokenType.Identifier).value);
-    while (this.lexer.peekNextToken().type === TokenType.Period) {
-      this.lexer.getNextToken();
-      parts.push(this.expectAndConsume(result, TokenType.Identifier).value);
+    parts.push(this.expectAndConsume(lexer, errors, TokenType.Identifier).value);
+    while (lexer.peekNextToken().type === TokenType.Period) {
+      lexer.getNextToken();
+      parts.push(this.expectAndConsume(lexer, errors, TokenType.Identifier).value);
     }
     return parts;
   }

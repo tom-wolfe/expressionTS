@@ -10,11 +10,10 @@ describe('Parser', () => {
         new Token(TokenType.Asterisk, 1, '*'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
-      const result = parser.parse();
+      const result = new Parser.Parser().parse(lexer);
       expect(result.errors.length).toBe(0);
 
-      expect(result.evaluator).not.toBeNull();
+      expect(result.expression).not.toBeNull();
     });
     it('correctly increments the index on multiple executions.', () => {
       const lexer = new MockLexer([
@@ -22,11 +21,10 @@ describe('Parser', () => {
         new Token(TokenType.Asterisk, 1, '*'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
-      const result = parser.parse();
+      const result = new Parser.Parser().parse(lexer);
       expect(result.errors.length).toBe(0);
-      expect(result.evaluator).not.toBeNull();
-      expect(result.evaluator.evaluate());
+      expect(result.expression).not.toBeNull();
+      expect(result.expression());
     });
   });
 });

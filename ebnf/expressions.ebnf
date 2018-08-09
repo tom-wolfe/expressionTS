@@ -1,33 +1,41 @@
 expression = 
-    [ "+" | "-" ], term, { [ "+" | "-" ], term }
+  simple_expression, [ boolean_operator, simple_expression ]
+;
+
+simple_expression = 
+  unary_operator, term, { [ "+" | "-" ], term }
 ;
 
 term =
-    factor, { ( "**" | "*" | "/" | % ), factor }
+  factor, { ( "**" | "*" | "/" | % ), factor }
 ;
 
 factor = 
-    number |
-    variable |
-    bracketed_expression |
-    function_call
+  number |
+  variable |
+  bracketed_expression |
+  function_call
 ;
 
 variable = 
-    dotted_identifier
+  dotted_identifier
 ;
 
 function_call = 
-    dotted_identifier, "(", expression, ")"
+  dotted_identifier, "(", expression, ")"
 ;
 
 bracketed_expression = 
-    "(", expression, ")"
+  "(", expression, ")"
 ;
 
 boolean_operator = 
-    "=" | "<" | ">" | "<=" | ">="
+  "=" | "<" | ">" | "<=" | ">=", "!=", "&", "|"
+;
+
+unary_operator = 
+  "+" | "-" | "!"
 ;
 
 dotted_identifier = 
-    identifier, { ".", identifier }
+  identifier, { ".", identifier }

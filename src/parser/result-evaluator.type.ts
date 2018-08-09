@@ -1,3 +1,3 @@
-import { ResolutionContext, ResolutionService } from './resolution-service';
+import { ResolutionContext } from './resolution-context';
 
-export type ResultEvaluator = (resolver: ResolutionService, context: ResolutionContext) => any;
+export type ResultEvaluator = (context?: ResolutionContext) => any;

@@ -1,7 +1,6 @@
 import { ErrorMessage } from './error-message';
-import { Evaluator } from './evaluator';
+import { Expression } from './expression';
 
 export class ParseResult {
-  errors: ErrorMessage[] = [];
-  evaluator: Evaluator;
+  constructor(public expression: Expression, public errors: ErrorMessage[]) { }
 }
