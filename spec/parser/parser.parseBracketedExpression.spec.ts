@@ -10,9 +10,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 1, '10'),
         new Token(TokenType.ParenthesisClose, 3, ')')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseBracketedExpression(errors);
+      const exp = parser.parseBracketedExpression(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(10);
     });
@@ -24,9 +24,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 4, '6'),
         new Token(TokenType.ParenthesisClose, 5, ')'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseBracketedExpression(errors);
+      const exp = parser.parseBracketedExpression(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(16);
     });
@@ -37,9 +37,9 @@ describe('Parser', () => {
         new Token(TokenType.Plus, 3, '+'),
         new Token(TokenType.Number, 4, '6')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      parser.parseBracketedExpression(errors);
+      parser.parseBracketedExpression(lexer, errors);
       expect(errors.length).toBeGreaterThanOrEqual(1);
     });
   });

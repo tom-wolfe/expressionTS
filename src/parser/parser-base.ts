@@ -1,17 +1,27 @@
 import { DefaultLexer, Lexer, Token, TokenType } from '../lexer';
 import { ErrorMessage } from './error-message';
+import { Expression } from './expression';
+import { ObjectMap } from './object-map';
 import { ParseResult } from './parse-result';
+import { DefaultResolutionContext, ResolutionContext } from './resolution-context';
 
 export abstract class ParserBase {
-  protected readonly lexer: Lexer;
 
-  constructor(input: Lexer | string) {
+  private createLexer(input: Lexer | string): Lexer {
     if (this.isLexer(input)) {
-      this.lexer = input;
+      return input;
     } else if (typeof input === 'string') {
-      this.lexer = new DefaultLexer(input);
+      return new DefaultLexer(input);
     } else {
       throw new Error('Unrecognized input type. input must be of type "ILexer | string".');
+    }
+  }
+
+  private createContext(context: ResolutionContext | ObjectMap): ResolutionContext {
+    if (this.isResolutionContext(context)) {
+      return context;
+    } else {
+      return new DefaultResolutionContext(context);
     }
   }
 
@@ -19,15 +29,27 @@ export abstract class ParserBase {
     return input.getNextToken;
   }
 
-  abstract parse(): ParseResult;
-
-  protected expectAndConsume(errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
-    this.expect(errors, expected, actual);
-    return this.lexer.getNextToken();
+  private isResolutionContext(input: any): input is ResolutionContext {
+    return input && input.resolve;
   }
 
-  protected expect(errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
-    actual = actual || this.lexer.peekNextToken();
+  parse(input: Lexer | string): ParseResult {
+    const lexer = this.createLexer(input);
+    const errors: ErrorMessage[] = [];
+    const exp: Expression = this.parseCore(lexer, errors);
+    const wrapper: Expression = context => exp(this.createContext(context));
+    return new ParseResult(wrapper, errors);
+  }
+
+  protected abstract parseCore(lexer: Lexer, errors: ErrorMessage[]): Expression;
+
+  protected expectAndConsume(lexer: Lexer, errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
+    this.expect(lexer, errors, expected, actual);
+    return lexer.getNextToken();
+  }
+
+  protected expect(lexer: Lexer, errors: ErrorMessage[], expected: TokenType, actual?: Token): Token {
+    actual = actual || lexer.peekNextToken();
     if (actual.type !== expected) {
       this.errorToken(errors, expected, actual);
     }

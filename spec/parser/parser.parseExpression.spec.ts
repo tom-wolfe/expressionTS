@@ -10,9 +10,9 @@ describe('Parser', () => {
         new Token(TokenType.GreaterThan, 2, '>'),
         new Token(TokenType.Number, 3, '6')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseExpression(errors);
+      const exp = parser.parseExpression(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(true);
     });
@@ -22,9 +22,9 @@ describe('Parser', () => {
         new Token(TokenType.LessThanEquals, 2, '<='),
         new Token(TokenType.Number, 3, '6')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseExpression(errors);
+      const exp = parser.parseExpression(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(false);
     });
@@ -36,9 +36,9 @@ describe('Parser', () => {
         new Token(TokenType.Plus, 4, '+'),
         new Token(TokenType.Number, 5, '2'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseExpression(errors);
+      const exp = parser.parseExpression(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(52);
     });

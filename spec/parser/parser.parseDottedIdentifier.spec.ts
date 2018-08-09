@@ -10,9 +10,9 @@ describe('Parser', () => {
         new Token(TokenType.Period, 3, '.'),
         new Token(TokenType.Identifier, 4, 'bar'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseDottedIdentifier(errors);
+      const exp = parser.parseDottedIdentifier(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp.length).toBe(2);
       expect(exp[0]).toBe('foo');

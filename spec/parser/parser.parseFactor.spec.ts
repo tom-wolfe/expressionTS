@@ -9,9 +9,9 @@ describe('Parser', () => {
       const lexer = new MockLexer([
         new Token(TokenType.Number, 0, '10')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp()).toBe(10);
     });
@@ -22,9 +22,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 6, '10'),
         new Token(TokenType.ParenthesisClose, 8, ')')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
 
       const context = new DefaultResolutionContext({
@@ -41,9 +41,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 8, '2'),
         new Token(TokenType.ParenthesisClose, 9, ')')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
 
       const context = new DefaultResolutionContext({
@@ -55,9 +55,9 @@ describe('Parser', () => {
       const lexer = new MockLexer([
         new Token(TokenType.Identifier, 0, 'x')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
 
       const context = new DefaultResolutionContext({
@@ -72,9 +72,9 @@ describe('Parser', () => {
         new Token(TokenType.Identifier, 6, 'x'),
         new Token(TokenType.ParenthesisClose, 7, ')')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
       const context = new DefaultResolutionContext({
         floor: Math.floor,
@@ -91,9 +91,9 @@ describe('Parser', () => {
         new Token(TokenType.Identifier, 10, 'bar'),
         new Token(TokenType.ParenthesisClose, 13, ')')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
       const context = new DefaultResolutionContext({
         floor: Math.floor,
@@ -109,9 +109,9 @@ describe('Parser', () => {
         new Token(TokenType.Number, 3, '4'),
         new Token(TokenType.ParenthesisClose, 4, ')'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseFactor(errors);
+      const exp = parser.parseFactor(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp(new DefaultResolutionContext())).toBe(10);
     });
@@ -120,9 +120,9 @@ describe('Parser', () => {
         new Token(TokenType.Comma, 5, ','),
         new Token(TokenType.Number, 6, '10'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      parser.parseFactor(errors);
+      parser.parseFactor(lexer, errors);
       expect(errors.length).toBeGreaterThanOrEqual(1);
     });
   });

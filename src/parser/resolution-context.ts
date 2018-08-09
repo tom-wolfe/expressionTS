@@ -1,8 +1,10 @@
+import { ObjectMap } from './object-map';
+
 export interface ResolutionContext {
   resolve(name: string[]): any;
 }
 
-const DEFAULT_FUNCTIONS: { [key: string]: any } = {
+const DEFAULT_FUNCTIONS: ObjectMap = {
   abs: Math.abs,
   pow: Math.pow,
   floor: Math.floor,
@@ -17,18 +19,18 @@ const DEFAULT_FUNCTIONS: { [key: string]: any } = {
 };
 
 export class DefaultResolutionContext implements ResolutionContext {
-  private _environment: { [key: string]: any } = {};
-  private _mergedEnvironment: { [key: string]: any } = DEFAULT_FUNCTIONS;
+  private _environment: ObjectMap = {};
+  private _mergedEnvironment: ObjectMap = DEFAULT_FUNCTIONS;
 
-  constructor(environment?: { [key: string]: any }) {
+  constructor(environment?: ObjectMap) {
     this.environment = environment;
   }
 
-  public get environment(): { [key: string]: any } {
+  public get environment(): ObjectMap {
     return this._environment
   }
 
-  public set environment(value: { [key: string]: any }) {
+  public set environment(value: ObjectMap) {
     this._environment = value;
     this._mergedEnvironment = Object.assign({}, DEFAULT_FUNCTIONS, this._environment);
   }

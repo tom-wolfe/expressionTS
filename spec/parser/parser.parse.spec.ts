@@ -10,8 +10,7 @@ describe('Parser', () => {
         new Token(TokenType.Asterisk, 1, '*'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
-      const result = parser.parse();
+      const result = new Parser.Parser().parse(lexer);
       expect(result.errors.length).toBe(0);
 
       expect(result.expression).not.toBeNull();
@@ -22,8 +21,7 @@ describe('Parser', () => {
         new Token(TokenType.Asterisk, 1, '*'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
-      const result = parser.parse();
+      const result = new Parser.Parser().parse(lexer);
       expect(result.errors.length).toBe(0);
       expect(result.expression).not.toBeNull();
       expect(result.expression());

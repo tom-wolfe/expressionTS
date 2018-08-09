@@ -11,9 +11,9 @@ describe('Parser', () => {
         new Token(TokenType.Asterisk, 1, '*'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseTerm(errors);
+      const exp = parser.parseTerm(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp(new DefaultResolutionContext())).toBe(24);
     });
@@ -23,9 +23,9 @@ describe('Parser', () => {
         new Token(TokenType.Slash, 1, '/'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseTerm(errors);
+      const exp = parser.parseTerm(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp(new DefaultResolutionContext())).toBe(1.5);
     });
@@ -35,9 +35,9 @@ describe('Parser', () => {
         new Token(TokenType.Percent, 1, '%'),
         new Token(TokenType.Number, 2, '4'),
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseTerm(errors);
+      const exp = parser.parseTerm(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp(new DefaultResolutionContext())).toBe(2);
     });
@@ -49,9 +49,9 @@ describe('Parser', () => {
         new Token(TokenType.Slash, 3, '/'),
         new Token(TokenType.Number, 4, '1')
       ]);
-      const parser = new Parser.Parser(lexer);
+      const parser = new Parser.Parser();
       const errors: Parser.ErrorMessage[] = [];
-      const exp = parser.parseTerm(errors);
+      const exp = parser.parseTerm(lexer, errors);
       expect(errors.length).toBe(0);
       expect(exp(new DefaultResolutionContext())).toBe(12);
     });
