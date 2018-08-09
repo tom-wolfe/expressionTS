@@ -30,18 +30,6 @@ describe('Parser', () => {
       expect(result.errors.length).toBe(0);
       expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(1.5);
     });
-    it('can correctly identify an exponent', () => {
-      const lexer = new MockLexer([
-        new Token(TokenType.Number, 0, '6'),
-        new Token(TokenType.DoubleAsterisk, 1, '**'),
-        new Token(TokenType.Number, 3, '4'),
-      ]);
-      const parser = new Parser.Parser(lexer);
-      const result = new ParseResult();
-      const exp = parser.parseTerm(result);
-      expect(result.errors.length).toBe(0);
-      expect(exp(new DefaultResolutionService(), new ResolutionContext())).toBe(1296);
-    });
     it('can correctly identify a modulo', () => {
       const lexer = new MockLexer([
         new Token(TokenType.Number, 0, '6'),

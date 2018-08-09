@@ -12,10 +12,18 @@ AddOperatorMap[TokenType.Plus] = (l, r) => l + r;
 AddOperatorMap[TokenType.Minus] = (l, r) => l - r;
 
 const MultiOperatorMap: { [token: string]: BooleanOperator } = {};
-MultiOperatorMap[TokenType.DoubleAsterisk] = (l, r) => Math.pow(l, r);
 MultiOperatorMap[TokenType.Asterisk] = (l, r) => l * r;
 MultiOperatorMap[TokenType.Slash] = (l, r) => l / r;
 MultiOperatorMap[TokenType.Percent] = (l, r) => l % r;
+
+const BooleanOperatorMap: { [token: string]: BooleanOperator } = {};
+BooleanOperatorMap[TokenType.Equals] = (l, r) => l === r;
+BooleanOperatorMap[TokenType.LessThan] = (l, r) => l < r;
+BooleanOperatorMap[TokenType.LessThanEquals] = (l, r) => l <= r;
+BooleanOperatorMap[TokenType.GreaterThan] = (l, r) => l > r;
+BooleanOperatorMap[TokenType.GreaterThanEquals] = (l, r) => l >= r;
+BooleanOperatorMap[TokenType.Pipe] = (l, r) => l || r;
+BooleanOperatorMap[TokenType.Ampersand] = (l, r) => l && r;
 
 export class Parser extends ParserBase {
   constructor(input: Lexer | string) { super(input); }
@@ -28,6 +36,17 @@ export class Parser extends ParserBase {
   }
 
   parseExpression(result: ParseResult): ResultEvaluator {
+    const lhs = this.parseSimpleExpression(result);
+
+    const operator = BooleanOperatorMap[this.lexer.peekNextToken().type.toString()];
+    if (!operator) { return lhs; }
+    this.lexer.getNextToken();
+
+    const rhs = this.parseSimpleExpression(result);
+    return (s, c) => operator(lhs(s, c), rhs(s, c));
+  }
+
+  parseSimpleExpression(result: ParseResult): ResultEvaluator {
     let tokenType = this.lexer.peekNextToken().type;
 
     // Consume unary operator. '+3' for example.

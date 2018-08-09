@@ -4,6 +4,34 @@ import { StringCharacterStream } from './string-character-stream';
 import { Token } from './token';
 import { TokenType } from './token-type';
 
+const SYMBOLS = {
+  // Unary
+  '!': TokenType.Exclamation,
+  '+': TokenType.Plus,
+  '-': TokenType.Minus,
+
+  // Boolean
+  '!=': TokenType.ExclamationEquals,
+  '=': TokenType.Equals,
+  '>': TokenType.GreaterThan,
+  '>=': TokenType.GreaterThanEquals,
+  '<': TokenType.LessThan,
+  '<=': TokenType.LessThanEquals,
+  '&': TokenType.Ampersand,
+  '|': TokenType.Pipe,
+
+  // Multipliers
+  '/': TokenType.Slash,
+  '*': TokenType.Asterisk,
+  '%': TokenType.Percent,
+
+  // Other
+  ',': TokenType.Comma,
+  '(': TokenType.ParenthesisOpen,
+  ')': TokenType.ParenthesisClose,
+  '.': TokenType.Period,
+}
+
 export class DefaultLexer implements Lexer {
   protected stream: CharacterStream;
   private currentToken: Token;
@@ -68,25 +96,25 @@ export class DefaultLexer implements Lexer {
 
   private constructNextToken() {
     let curChar: string;
+    const symbolList = Object.keys(SYMBOLS);
     while (curChar = this.stream.getNextCharacter()) {
       switch (true) {
         case this.idCharRegex.test(curChar): return this.parseIdentifier();
         case this.numCharRegex.test(curChar): return this.parseNumber();
-        case curChar === ',': return this.createToken(TokenType.Comma, curChar);
-        case curChar === '(': return this.createToken(TokenType.ParenthesisOpen, curChar);
-        case curChar === ')': return this.createToken(TokenType.ParenthesisClose, curChar);
-        case curChar === '+': return this.createToken(TokenType.Plus, curChar);
-        case curChar === '/': return this.createToken(TokenType.Slash, curChar);
-        case curChar === '-': return this.createToken(TokenType.Minus, curChar);
-        case curChar === '%': return this.createToken(TokenType.Percent, curChar);
-        case curChar === '.': return this.createToken(TokenType.Period, curChar);
-        case curChar === '*':
-          if (this.stream.peekNextCharacter() === '*') {
-            this.stream.getNextCharacter();
-            return this.createToken(TokenType.DoubleAsterisk, curChar + this.stream.getCurrentCharacter());
-          } else {
-            return this.createToken(TokenType.Asterisk, curChar);
+        case !!symbolList.find(s => s[0] === curChar): {
+          let lastFullMatch: string;
+          let searchString = curChar;
+          let hasPeeked = false;
+          while (symbolList.find(s => s.startsWith(searchString))) {
+            if (hasPeeked) { this.stream.getNextCharacter(); }
+            if (symbolList.find(s => s === searchString)) {
+              lastFullMatch = searchString;
+            }
+            searchString += this.stream.peekNextCharacter();
+            hasPeeked = true;
           }
+          return this.createToken(SYMBOLS[lastFullMatch], lastFullMatch);
+        }
         case /\W/.test(curChar):
           // Ignore whitespace.
           break;
