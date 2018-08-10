@@ -28,7 +28,30 @@ describe('Parser', () => {
       expect(errors.length).toBe(0);
       expect(exp()).toBe(4);
     });
-    it('can correctly parse a simple negation', () => {
+    it('can correctly parse a simple unary +', () => {
+      const lexer = new MockLexer([
+        new Token(TokenType.Plus, 0, '+'),
+        new Token(TokenType.Number, 1, '4')
+      ]);
+      const parser = new Parser.Parser();
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(lexer, errors);
+      expect(errors.length).toBe(0);
+      expect(exp()).toBe(4);
+    });
+    it('can correctly parse a unary !', () => {
+      const lexer = new MockLexer([
+        new Token(TokenType.Exclamation, 0, '!'),
+        new Token(TokenType.Identifier, 1, 'x')
+      ]);
+      const parser = new Parser.Parser();
+      const errors: Parser.ErrorMessage[] = [];
+      const exp = parser.parseSimpleExpression(lexer, errors);
+      const env = new Parser.DefaultResolutionContext({ x: true });
+      expect(errors.length).toBe(0);
+      expect(exp(env)).toBe(false);
+    });
+    it('can correctly parse a simple unary -', () => {
       const lexer = new MockLexer([
         new Token(TokenType.Minus, 0, '-'),
         new Token(TokenType.Number, 1, '4')

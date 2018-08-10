@@ -10,7 +10,7 @@ type BooleanOperator = (l: any, r: any) => any;
 const UnaryOperatorMap: { [token: string]: UnaryOperator } = {
   [TokenType.Plus]: n => +n,
   [TokenType.Minus]: n => -n,
-  [TokenType.Exclamation]: n => !n,
+  [TokenType.Exclamation]: n => !n
 };
 
 const AddOperatorMap: { [token: string]: BooleanOperator } = {
@@ -30,8 +30,8 @@ const BooleanOperatorMap: { [token: string]: BooleanOperator } = {
   [TokenType.LessThanEquals]: (l, r) => l <= r,
   [TokenType.GreaterThan]: (l, r) => l > r,
   [TokenType.GreaterThanEquals]: (l, r) => l >= r,
-  [TokenType.Pipe]: (l, r) => l || r,
-  [TokenType.Ampersand]: (l, r) => l && r
+  [TokenType.Pipe]: (l, r) => !!(l || r),
+  [TokenType.Ampersand]: (l, r) => !!(l && r)
 };
 
 export class Parser extends ParserBase {
